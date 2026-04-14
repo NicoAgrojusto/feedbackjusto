@@ -504,6 +504,25 @@
     border-color: var(--g);
   }
 
+  /* ── INSTALL BANNER ── */
+  .install-banner {
+    background: var(--g-d);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin: 0 18px 12px;
+    flex-shrink: 0;
+  }
+  .install-icon { width: 34px; height: 34px; border-radius: 9px; background: var(--g-l); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .install-icon svg { width: 18px; height: 18px; }
+  .install-txt { flex: 1; }
+  .install-ttl { font-size: 12px; font-weight: 600; color: #fff; }
+  .install-sub { font-size: 10px; color: rgba(255,255,255,0.55); margin-top: 2px; }
+  .install-btn { font-size: 11px; font-weight: 600; color: var(--g-d); background: #fff; border: none; border-radius: 8px; padding: 7px 12px; cursor: pointer; flex-shrink: 0; }
+  .install-close { font-size: 16px; color: rgba(255,255,255,0.4); cursor: pointer; padding: 0 4px; flex-shrink: 0; }
+
   /* ── TOAST ── */
   .toast {
     position: absolute;
@@ -742,6 +761,22 @@
 
   <!-- TOAST -->
   <div class="toast" id="toast"></div>
+
+  <!-- INSTALL BANNER -->
+  <div class="install-banner" id="install-banner" style="display:none;">
+    <div class="install-icon">
+      <svg viewBox="0 0 18 18" fill="none">
+        <path d="M9 2v9M6 8l3 3 3-3" stroke="#2D6A4F" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="2" y="12" width="14" height="3" rx="1.5" stroke="#2D6A4F" stroke-width="1.4"/>
+      </svg>
+    </div>
+    <div class="install-txt">
+      <div class="install-ttl">Instalá la app</div>
+      <div class="install-sub">Accedé desde tu pantalla de inicio</div>
+    </div>
+    <button class="install-btn" onclick="instalarPWA()">Instalar</button>
+    <span class="install-close" onclick="document.getElementById('install-banner').style.display='none'">×</span>
+  </div>
 
 </div>
 
@@ -1138,6 +1173,25 @@
     t.classList.add("show");
     setTimeout(() => t.classList.remove("show"), 2500);
   }
+
+  // ── PWA INSTALL ───────────────────────────────────────────
+  let deferredPrompt = null;
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    document.getElementById("install-banner").style.display = "flex";
+  });
+  function instalarPWA() {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(() => {
+      deferredPrompt = null;
+      document.getElementById("install-banner").style.display = "none";
+    });
+  }
+  window.addEventListener("appinstalled", () => {
+    document.getElementById("install-banner").style.display = "none";
+  });
 </script>
 </body>
 </html>
