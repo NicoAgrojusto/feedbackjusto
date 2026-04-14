@@ -352,9 +352,9 @@
 
   // ── Leer parámetros de la URL ──
   const params = new URLSearchParams(window.location.search);
-  const productorNombre = decodeURIComponent(params.get("p") || "");
-  const clienteNombre   = decodeURIComponent(params.get("c") || "");
-  const productoNombre  = decodeURIComponent(params.get("prod") || "");
+  const productorNombre = params.get("p") || "";
+  const clienteNombre   = params.get("c") || "";
+  const productoNombre  = params.get("prod") || "";
 
   let preguntas = [];
   let respuestas = {};
@@ -636,11 +636,8 @@
   }
 
   async function apiPost(data) {
-    const res = await fetch(API, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
-    });
+    const p = new URLSearchParams({ payload: JSON.stringify(data) });
+    const res = await fetch(API + "?" + p.toString());
     return res.json();
   }
 

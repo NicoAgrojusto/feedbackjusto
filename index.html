@@ -820,9 +820,9 @@
     if (!producto) { showToast("Ingresá el producto vendido"); return; }
 
     const params = new URLSearchParams({
-      p: encodeURIComponent(productor.nombre),
-      c: encodeURIComponent(cliente),
-      prod: encodeURIComponent(producto)
+      p: productor.nombre,
+      c: cliente,
+      prod: producto
     });
     generatedLink = `${BASE_URL}/encuesta.html?${params.toString()}`;
 
