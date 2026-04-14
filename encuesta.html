@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#1B3A2D">
+<title>Tu opinión importa</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --g:    #2D6A4F;
+    --g-d:  #1B3A2D;
+    --g-m:  #52B788;
+    --g-l:  #D8EFE3;
+    --g-xl: #F0FAF5;
+    --o:    #E76F28;
+    --o-l:  #FDEBD8;
+    --o-d:  #7A3410;
+    --cream:#F7F3EE;
+    --sand: #EEE8E0;
+    --white:#FFFFFF;
+    --tx:   #1B2E22;
+    --tx-m: #4A6356;
+    --tx-s: #8FA898;
+    --bd:   rgba(45,106,79,0.12);
+    --bd-m: rgba(45,106,79,0.22);
+    --r:    14px;
+    --r-sm: 10px;
+    --ff:   'DM Sans', sans-serif;
+    --ff-s: 'DM Serif Display', serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    min-height: 100%;
+    font-family: var(--ff);
+    background: var(--sand);
+    color: var(--tx);
+  }
+
+  #app {
+    max-width: 430px;
+    margin: 0 auto;
+    min-height: 100vh;
+    background: var(--cream);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--g-d);
+    padding: 18px 20px 16px;
+  }
+  .header-brand {
+    font-family: var(--ff-s);
+    font-size: 20px;
+    color: #fff;
+    line-height: 1;
+  }
+  .header-sub {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 3px;
+  }
+
+  /* ── BARRA DE PROGRESO ── */
+  .progress-wrap {
+    background: rgba(0,0,0,0.15);
+    height: 4px;
+  }
+  .progress-bar {
+    height: 100%;
+    background: var(--o);
+    transition: width 0.4s ease;
+  }
+
+  /* ── BODY ── */
+  .body {
+    flex: 1;
+    padding: 28px 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* ── STEP INDICATOR ── */
+  .step-indicator {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--tx-s);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+  }
+
+  .step-title {
+    font-family: var(--ff-s);
+    font-size: 24px;
+    color: var(--g-d);
+    line-height: 1.25;
+  }
+
+  .step-sub {
+    font-size: 13px;
+    color: var(--tx-m);
+    margin-top: -8px;
+  }
+
+  /* ── EMOJI ROW ── */
+  .emoji-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .emoji-btn {
+    flex: 1;
+    aspect-ratio: 1;
+    border-radius: 14px;
+    border: 1.5px solid var(--bd-m);
+    background: var(--white);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+    padding: 8px 4px;
+  }
+  .emoji-btn:active { transform: scale(0.93); }
+  .emoji-btn.selected {
+    border-color: var(--g);
+    background: var(--g-l);
+    transform: scale(1.05);
+  }
+  .emoji-btn .e { font-size: 28px; line-height: 1; }
+  .emoji-btn .e-lbl { font-size: 9px; color: var(--tx-s); font-weight: 500; text-align: center; }
+  .emoji-btn.selected .e-lbl { color: var(--g); }
+
+  /* ── CHIPS ── */
+  .chips-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .chip {
+    padding: 9px 14px;
+    border-radius: 30px;
+    border: 1.5px solid var(--bd-m);
+    background: var(--white);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--tx-m);
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .chip:active { transform: scale(0.96); }
+  .chip.selected {
+    background: var(--g-l);
+    border-color: var(--g);
+    color: var(--g-d);
+  }
+  .chip.selected-o {
+    background: var(--o-l);
+    border-color: var(--o);
+    color: var(--o-d);
+  }
+
+  /* ── TEXTAREA ── */
+  .textarea {
+    width: 100%;
+    min-height: 110px;
+    border: 1.5px solid var(--bd-m);
+    border-radius: var(--r-sm);
+    padding: 14px;
+    font-family: var(--ff);
+    font-size: 14px;
+    color: var(--tx);
+    background: var(--white);
+    resize: none;
+    outline: none;
+    transition: border-color 0.15s;
+    line-height: 1.5;
+  }
+  .textarea:focus { border-color: var(--g); }
+
+  /* ── BOTONES ── */
+  .btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: var(--r-sm);
+    border: none;
+    font-family: var(--ff);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+    text-align: center;
+  }
+  .btn:active { transform: scale(0.98); opacity: 0.88; }
+  .btn-g { background: var(--g); color: #fff; }
+  .btn-g:disabled { background: var(--bd-m); color: var(--tx-s); cursor: not-allowed; transform: none; }
+  .btn-outline {
+    background: transparent;
+    border: 1px solid var(--bd-m);
+    color: var(--tx-m);
+    font-size: 13px;
+    padding: 12px;
+  }
+
+  /* ── GRACIAS ── */
+  #screen-gracias {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex: 1;
+    padding: 40px 28px;
+    gap: 16px;
+  }
+  #screen-gracias.active { display: flex; }
+
+  .check-circle {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: var(--g-l);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes popIn {
+    from { transform: scale(0); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+  .check-circle svg { width: 36px; height: 36px; }
+
+  .gracias-title {
+    font-family: var(--ff-s);
+    font-size: 28px;
+    color: var(--g-d);
+  }
+  .gracias-sub {
+    font-size: 14px;
+    color: var(--tx-m);
+    line-height: 1.6;
+    max-width: 280px;
+  }
+  .gracias-divider {
+    width: 48px;
+    height: 1px;
+    background: var(--bd-m);
+    margin: 4px auto;
+  }
+  .gracias-powered {
+    font-size: 11px;
+    color: var(--tx-s);
+  }
+
+  /* ── LOADING ── */
+  #screen-loading {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+    color: var(--tx-s);
+    font-size: 13px;
+  }
+  .spinner {
+    width: 28px; height: 28px;
+    border: 2.5px solid var(--bd-m);
+    border-top-color: var(--g);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── ERROR ── */
+  #screen-error {
+    display: none;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+    padding: 32px;
+    text-align: center;
+    color: var(--tx-m);
+    font-size: 14px;
+  }
+
+  .footer-space { height: 24px; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <div class="header" id="main-header">
+    <div class="header-brand" id="header-brand">Cargando...</div>
+    <div class="header-sub">Tu opinión importa</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+  </div>
+
+  <!-- LOADING -->
+  <div id="screen-loading">
+    <div class="spinner"></div>
+    <span>Un momento...</span>
+  </div>
+
+  <!-- ERROR -->
+  <div id="screen-error">
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+      <circle cx="24" cy="24" r="20" stroke="#8FA898" stroke-width="2"/>
+      <path d="M24 14v12M24 32v2" stroke="#8FA898" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>
+    <div id="error-msg">No se pudo cargar la encuesta.</div>
+  </div>
+
+  <!-- ENCUESTA (se genera dinámicamente) -->
+  <div id="screen-encuesta" style="display:none; flex-direction:column; flex:1;">
+    <div class="body" id="step-body"></div>
+    <div style="padding: 0 20px; display:flex; flex-direction:column; gap:10px;" id="step-actions"></div>
+    <div class="footer-space"></div>
+  </div>
+
+  <!-- GRACIAS -->
+  <div id="screen-gracias">
+    <div class="check-circle">
+      <svg viewBox="0 0 36 36" fill="none">
+        <path d="M9 18l6 6 12-12" stroke="#2D6A4F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="gracias-title" id="gracias-nombre">¡Gracias!</div>
+    <div class="gracias-sub" id="gracias-sub">Tu opinión nos ayuda a mejorar cada día.</div>
+    <div class="gracias-divider"></div>
+    <div class="gracias-powered">Impulsado por FeedbackJusto · Agrojusto</div>
+  </div>
+
+</div>
+
+<script>
+  const API = "https://script.google.com/macros/s/AKfycbx3_eheEan_MXjDoLLof9kVpQZPBDpgJPUO46BE3BKezfbyjR4Iyx0Vko70j2i5snSQ/exec";
+
+  // ── Leer parámetros de la URL ──
+  const params = new URLSearchParams(window.location.search);
+  const productorNombre = decodeURIComponent(params.get("p") || "");
+  const clienteNombre   = decodeURIComponent(params.get("c") || "");
+  const productoNombre  = decodeURIComponent(params.get("prod") || "");
+
+  let preguntas = [];
+  let respuestas = {};
+  let stepActual = 0;
+
+  const emojiLabels = { "😞":"Muy mal", "😐":"Regular", "🙂":"Bien", "😄":"Muy bien", "🤩":"Excelente" };
+
+  // ── INIT ──────────────────────────────────────────────────
+  async function init() {
+    if (!productorNombre) {
+      showError("Link inválido. Pedile al productor que te reenvíe el link.");
+      return;
+    }
+
+    try {
+      // Cargar datos del productor y sus preguntas en paralelo
+      const [resProductor, resPreguntas] = await Promise.all([
+        apiFetch(`?action=getProductor&id=${encodeURIComponent(productorNombre)}`),
+        apiPost({ action: "getPreguntas", pin: "__PUBLIC__", nombre: productorNombre })
+      ]);
+
+      // Nombre del productor en header
+      const nombreMostrar = resProductor.ok
+        ? resProductor.productor.nombre
+        : productorNombre;
+      document.getElementById("header-brand").textContent = nombreMostrar;
+
+      // Preguntas
+      if (resPreguntas.ok && resPreguntas.preguntas) {
+        preguntas = resPreguntas.preguntas;
+      } else {
+        preguntas = preguntasPorDefecto();
+      }
+
+      // Personalizar pantalla de gracias
+      const nombre = clienteNombre ? clienteNombre.split(" ")[0] : "";
+      document.getElementById("gracias-nombre").textContent =
+        nombre ? `¡Gracias, ${nombre}!` : "¡Gracias!";
+      document.getElementById("gracias-sub").textContent =
+        `Tu opinión ayuda a ${nombreMostrar} a seguir mejorando cada día.`;
+
+      mostrarEncuesta();
+    } catch(e) {
+      showError("Error de conexión. Verificá tu internet e intentá de nuevo.");
+    }
+  }
+
+  // ── MOSTRAR ENCUESTA ──────────────────────────────────────
+  function mostrarEncuesta() {
+    document.getElementById("screen-loading").style.display = "none";
+    document.getElementById("screen-encuesta").style.display = "flex";
+    renderStep(0);
+  }
+
+  function renderStep(index) {
+    stepActual = index;
+    const total = preguntas.length;
+    const pct = Math.round(((index) / total) * 100);
+    document.getElementById("progress-bar").style.width = pct + "%";
+
+    const p = preguntas[index];
+    const body = document.getElementById("step-body");
+    const actions = document.getElementById("step-actions");
+
+    body.innerHTML = "";
+    actions.innerHTML = "";
+
+    // Indicador de paso
+    const ind = document.createElement("div");
+    ind.className = "step-indicator";
+    ind.textContent = `Pregunta ${index + 1} de ${total}`;
+    body.appendChild(ind);
+
+    // Título
+    const titulo = document.createElement("div");
+    titulo.className = "step-title";
+    // Personalizar con nombre del cliente si corresponde
+    let textoTitulo = p.texto;
+    if (clienteNombre && index === 0) {
+      const nombre = clienteNombre.split(" ")[0];
+      textoTitulo = `Hola ${nombre}, ${p.texto.charAt(0).toLowerCase()}${p.texto.slice(1)}`;
+    }
+    titulo.textContent = textoTitulo;
+    body.appendChild(titulo);
+
+    // Subtítulo si es chips (multi-selección)
+    if (p.tipo === "chips") {
+      const sub = document.createElement("div");
+      sub.className = "step-sub";
+      sub.textContent = "Podés elegir más de una opción";
+      body.appendChild(sub);
+    }
+
+    // Contenido según tipo
+    if (p.tipo === "emojis") {
+      renderEmojis(p, body);
+    } else if (p.tipo === "chips") {
+      renderChips(p, body);
+    } else if (p.tipo === "texto") {
+      renderTexto(p, body);
+    }
+
+    // Botones de acción
+    const esUltimo = index === total - 1;
+    const esTipoTexto = p.tipo === "texto";
+
+    const btnSig = document.createElement("button");
+    btnSig.className = "btn btn-g";
+    btnSig.id = "btn-siguiente";
+    btnSig.textContent = esUltimo ? "Enviar respuestas" : "Siguiente →";
+
+    if (!esTipoTexto) {
+      // Deshabilitado hasta que seleccionen algo
+      btnSig.disabled = !respuestas[p.id];
+      btnSig.onclick = () => avanzar(index);
+    } else {
+      btnSig.disabled = false;
+      btnSig.onclick = () => avanzar(index);
+    }
+
+    actions.appendChild(btnSig);
+
+    // Botón saltear para preguntas opcionales (texto libre)
+    if (esTipoTexto) {
+      const btnSaltear = document.createElement("button");
+      btnSaltear.className = "btn btn-outline";
+      btnSaltear.textContent = "Saltear esta pregunta";
+      btnSaltear.onclick = () => avanzar(index, true);
+      actions.appendChild(btnSaltear);
+    }
+  }
+
+  function renderEmojis(p, container) {
+    const row = document.createElement("div");
+    row.className = "emoji-row";
+    (p.opciones || ["😞","😐","🙂","😄","🤩"]).forEach(emoji => {
+      const btn = document.createElement("div");
+      btn.className = "emoji-btn" + (respuestas[p.id] === emoji ? " selected" : "");
+      btn.innerHTML = `<span class="e">${emoji}</span><span class="e-lbl">${emojiLabels[emoji] || ""}</span>`;
+      btn.onclick = () => {
+        respuestas[p.id] = emoji;
+        row.querySelectorAll(".emoji-btn").forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        document.getElementById("btn-siguiente").disabled = false;
+      };
+      row.appendChild(btn);
+    });
+    container.appendChild(row);
+  }
+
+  function renderChips(p, container) {
+    const wrap = document.createElement("div");
+    wrap.className = "chips-wrap";
+    if (!respuestas[p.id]) respuestas[p.id] = [];
+
+    // Detectar si es pregunta de mejora (tono naranja)
+    const esMejora = p.texto.toLowerCase().includes("mejor") ||
+                     p.texto.toLowerCase().includes("cambiar");
+
+    (p.opciones || []).forEach(op => {
+      const chip = document.createElement("div");
+      const yaSeleccionado = respuestas[p.id].includes(op);
+      chip.className = "chip" + (yaSeleccionado ? (esMejora ? " selected-o" : " selected") : "");
+      chip.textContent = op;
+      chip.onclick = () => {
+        const idx = respuestas[p.id].indexOf(op);
+        if (idx > -1) {
+          respuestas[p.id].splice(idx, 1);
+          chip.classList.remove("selected", "selected-o");
+        } else {
+          respuestas[p.id].push(op);
+          chip.classList.add(esMejora ? "selected-o" : "selected");
+        }
+        document.getElementById("btn-siguiente").disabled = respuestas[p.id].length === 0;
+      };
+      wrap.appendChild(chip);
+    });
+
+    container.appendChild(wrap);
+  }
+
+  function renderTexto(p, container) {
+    const ta = document.createElement("textarea");
+    ta.className = "textarea";
+    ta.placeholder = "Escribí tu comentario acá... (opcional)";
+    ta.value = respuestas[p.id] || "";
+    ta.oninput = () => { respuestas[p.id] = ta.value; };
+    container.appendChild(ta);
+  }
+
+  // ── AVANZAR ───────────────────────────────────────────────
+  async function avanzar(index, saltear = false) {
+    if (saltear) {
+      const p = preguntas[index];
+      respuestas[p.id] = "";
+    }
+
+    const siguiente = index + 1;
+    if (siguiente < preguntas.length) {
+      renderStep(siguiente);
+      window.scrollTo(0, 0);
+    } else {
+      await enviarRespuestas();
+    }
+  }
+
+  // ── ENVIAR ────────────────────────────────────────────────
+  async function enviarRespuestas() {
+    const btnEnviar = document.getElementById("btn-siguiente");
+    if (btnEnviar) {
+      btnEnviar.textContent = "Enviando...";
+      btnEnviar.disabled = true;
+    }
+
+    // Mapear respuestas a estructura del backend
+    const mapeado = {
+      satisfaccion: "",
+      destacar: [],
+      mejorar: [],
+      comentario: ""
+    };
+
+    preguntas.forEach(p => {
+      const r = respuestas[p.id];
+      if (!r) return;
+      if (p.tipo === "emojis") {
+        mapeado.satisfaccion = r;
+      } else if (p.tipo === "chips") {
+        const esMejora = p.texto.toLowerCase().includes("mejor") ||
+                         p.texto.toLowerCase().includes("cambiar");
+        if (esMejora) {
+          mapeado.mejorar = Array.isArray(r) ? r : [r];
+        } else {
+          mapeado.destacar = Array.isArray(r) ? r : [r];
+        }
+      } else if (p.tipo === "texto") {
+        mapeado.comentario = r;
+      }
+    });
+
+    try {
+      const res = await apiPost({
+        action: "saveRespuesta",
+        productorNombre,
+        cliente: clienteNombre,
+        producto: productoNombre,
+        respuestas: mapeado
+      });
+
+      if (res.ok) {
+        mostrarGracias();
+      } else {
+        showError("No pudimos guardar tu respuesta. Intentá de nuevo.");
+      }
+    } catch(e) {
+      showError("Error de conexión. Revisá tu internet.");
+    }
+  }
+
+  // ── GRACIAS ───────────────────────────────────────────────
+  function mostrarGracias() {
+    document.getElementById("progress-bar").style.width = "100%";
+    document.getElementById("screen-encuesta").style.display = "none";
+    document.getElementById("screen-gracias").classList.add("active");
+    window.scrollTo(0, 0);
+  }
+
+  // ── HELPERS ───────────────────────────────────────────────
+  function showError(msg) {
+    document.getElementById("screen-loading").style.display = "none";
+    document.getElementById("screen-encuesta").style.display = "none";
+    document.getElementById("screen-error").style.display = "flex";
+    document.getElementById("error-msg").textContent = msg;
+  }
+
+  async function apiFetch(query) {
+    const res = await fetch(API + query);
+    return res.json();
+  }
+
+  async function apiPost(data) {
+    const res = await fetch(API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+    return res.json();
+  }
+
+  function preguntasPorDefecto() {
+    return [
+      { id:"1", texto:"¿Cómo fue tu experiencia general?", tipo:"emojis", opciones:["😞","😐","🙂","😄","🤩"] },
+      { id:"2", texto:"¿Qué destacarías?", tipo:"chips", opciones:["Sabor","Frescura","Precio","Presentación","Atención","Entrega"] },
+      { id:"3", texto:"¿Qué mejorarías?", tipo:"chips", opciones:["Precio","Packaging","Atención","Entrega","Nada, todo bien"] },
+      { id:"4", texto:"¿Algo más que quieras contarnos?", tipo:"texto", opciones:[] }
+    ];
+  }
+
+  // ── ARRANCAR ──────────────────────────────────────────────
+  init();
+</script>
+</body>
+</html>
