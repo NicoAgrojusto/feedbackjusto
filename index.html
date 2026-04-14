@@ -975,7 +975,23 @@
         const score = emojiMap[r.satisfaccion] || 0;
         const isLow = score <= 2;
         const initials = (r.cliente || "?").split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
-        const fecha = r.fecha || "";
+        // Limpiar fecha: si viene ISO la convertimos, si ya es string la usamos
+        let fecha = r.fecha || "";
+        if (fecha.includes("T") && fecha.includes("Z")) {
+          try {
+            const d = new Date(fecha);
+            fecha = d.toLocaleDateString("es-AR") + " " + d.toLocaleTimeString("es-AR", {hour:"2-digit", minute:"2-digit"});
+          } catch(e) {}
+        }
+        // Limpiar producto: si tiene URL, extraer el param prod=
+        let producto = r.producto || "";
+        if (producto.includes("feedbackjusto") || producto.includes("http")) {
+          try {
+            const urlPart = producto.includes("?") ? producto.split("?")[1] : "";
+            const p = new URLSearchParams(urlPart);
+            producto = p.get("prod") || p.get("p") || "—";
+          } catch(e) { producto = "—"; }
+        }
         const destacar = r.destacar || "";
         const mejorar = r.mejorar || "";
         const comentario = r.comentario || "";
