@@ -100,7 +100,7 @@ html,body{min-height:100%;font-family:var(--ff);background:var(--sand);color:var
 </head>
 <body>
 
-<div id="login-wrap">
+<div id="login-wrap" style="display:none;">
   <div class="login-logo">
     <svg viewBox="0 0 36 36" fill="none">
       <path d="M18 4C14 4 10.5 7 9.2 11.2C6.5 12 4 14.6 4 17.8C4 21.5 7 24.5 10.5 24.5h15C29 24.5 32 21.5 32 17.8c0-3.2-2.5-6.2-5.2-7C25.5 7 22 4 18 4z" fill="#2D6A4F"/>
@@ -124,7 +124,7 @@ html,body{min-height:100%;font-family:var(--ff);background:var(--sand);color:var
   </div>
 </div>
 
-<div id="loading"><div class="spinner"></div><span>Cargando datos...</span></div>
+<div id="loading" style="display:flex;"><div class="spinner"></div><span>Cargando datos...</span></div>
 
 <div id="dashboard-wrap">
   <div class="topbar">
@@ -201,6 +201,30 @@ html,body{min-height:100%;font-family:var(--ff);background:var(--sand);color:var
 <script>
 const API="https://script.google.com/macros/s/AKfycbx3_eheEan_MXjDoLLof9kVpQZPBDpgJPUO46BE3BKezfbyjR4Iyx0Vko70j2i5snSQ/exec";
 let pinBuf="",dashData=null,masterPin="";
+
+// Cargar dashboard directo desde PIN en URL
+(async function autoLogin() {
+  const urlPin = new URLSearchParams(window.location.search).get("autopin");
+  if (!urlPin) {
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("loading").innerHTML = '<div style="text-align:center;padding:40px;color:var(--tx-s);font-size:14px;">Acceso denegado. Ingresá desde la app principal.</div>';
+    document.getElementById("loading").style.display = "flex";
+    return;
+  }
+  masterPin = urlPin;
+  pinBuf = urlPin;
+  try {
+    const res = await api({action:"getDashboard", pin:urlPin});
+    if (res.ok) {
+      dashData = res.dashboard;
+      mostrarDash();
+    } else {
+      document.getElementById("loading").innerHTML = '<div style="text-align:center;padding:40px;color:var(--r-d);font-size:14px;">PIN incorrecto. Volvé a la app principal.</div>';
+    }
+  } catch(e) {
+    document.getElementById("loading").innerHTML = '<div style="text-align:center;padding:40px;color:var(--tx-s);font-size:14px;">Error de conexión. Revisá tu internet.</div>';
+  }
+})();
 let cDonut,cRanking,cActividad,cDestacar,cMejorar,cEvolucion;
 const COL={excelente:"#2D6A4F",bien:"#52B788",regular:"#E76F28",alerta:"#E24B4A",sin_datos:"#B4B2A9"};
 const LBL={excelente:"Excelente (4–5)",bien:"Bien (3–4)",regular:"Regular (2–3)",alerta:"Alerta (<2)",sin_datos:"Sin datos"};
