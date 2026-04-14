@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#1B3A2D">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FeedbackJusto">
+<link rel="manifest" href="manifest.json">
+<title>FeedbackJusto</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --g:     #2D6A4F;
+    --g-d:   #1B3A2D;
+    --g-m:   #52B788;
+    --g-l:   #D8EFE3;
+    --g-xl:  #F0FAF5;
+    --o:     #E76F28;
+    --o-l:   #FDEBD8;
+    --o-d:   #7A3410;
+    --cream: #F7F3EE;
+    --sand:  #EEE8E0;
+    --white: #FFFFFF;
+    --tx:    #1B2E22;
+    --tx-m:  #4A6356;
+    --tx-s:  #8FA898;
+    --bd:    rgba(45,106,79,0.12);
+    --bd-m:  rgba(45,106,79,0.22);
+    --r:     12px;
+    --r-sm:  8px;
+    --ff:    'DM Sans', sans-serif;
+    --ff-s:  'DM Serif Display', serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    height: 100%; width: 100%;
+    font-family: var(--ff);
+    background: var(--sand);
+    color: var(--tx);
+    overscroll-behavior: none;
+  }
+
+  /* ── APP SHELL ── */
+  #app {
+    max-width: 430px;
+    margin: 0 auto;
+    min-height: 100vh;
+    background: var(--cream);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    background: var(--g-d);
+    padding: 16px 18px 14px;
+    flex-shrink: 0;
+  }
+  .topbar-brand {
+    font-family: var(--ff-s);
+    font-size: 20px;
+    color: #fff;
+    letter-spacing: -0.01em;
+    line-height: 1;
+  }
+  .topbar-sub {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 3px;
+    font-weight: 400;
+  }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    background: var(--g-d);
+    display: flex;
+    padding: 0 4px 2px;
+    border-top: 1px solid rgba(255,255,255,0.07);
+    flex-shrink: 0;
+  }
+  .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 10px 4px 8px;
+    border-top: 2.5px solid transparent;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    user-select: none;
+  }
+  .nav-item.active { border-top-color: var(--o); }
+  .nav-item svg { width: 20px; height: 20px; opacity: 0.4; transition: opacity 0.2s; }
+  .nav-item.active svg { opacity: 1; }
+  .nav-txt {
+    font-size: 10px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.35);
+    transition: color 0.2s;
+  }
+  .nav-item.active .nav-txt { color: #fff; }
+
+  /* ── SCREENS ── */
+  .screen {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 18px;
+    display: none;
+    flex-direction: column;
+    gap: 16px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .screen.active { display: flex; }
+
+  /* ── LOGIN SCREEN ── */
+  #screen-login {
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    min-height: 100%;
+    background: var(--cream);
+  }
+  .login-logo {
+    width: 64px; height: 64px;
+    background: var(--g-l);
+    border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .login-logo svg { width: 36px; height: 36px; }
+  .login-title {
+    font-family: var(--ff-s);
+    font-size: 26px;
+    color: var(--g-d);
+    text-align: center;
+  }
+  .login-sub {
+    font-size: 13px;
+    color: var(--tx-m);
+    text-align: center;
+    line-height: 1.5;
+  }
+  .pin-display {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 4px 0;
+  }
+  .pin-dot {
+    width: 46px; height: 54px;
+    border-radius: 12px;
+    border: 1.5px solid var(--bd-m);
+    background: var(--white);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--g-d);
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .pin-dot.filled {
+    border-color: var(--g);
+    background: var(--g-l);
+  }
+  .pin-dot.error {
+    border-color: #E24B4A;
+    background: #FCEBEB;
+    animation: shake 0.3s ease;
+  }
+  @keyframes shake {
+    0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)}
+  }
+  .numpad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    width: 100%;
+    max-width: 280px;
+  }
+  .numpad-btn {
+    height: 58px;
+    border-radius: 14px;
+    border: 1px solid var(--bd-m);
+    background: var(--white);
+    font-family: var(--ff);
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--tx);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.1s, transform 0.1s;
+    user-select: none;
+  }
+  .numpad-btn:active { background: var(--g-l); transform: scale(0.95); }
+  .numpad-btn.del { font-size: 16px; color: var(--tx-m); }
+  .numpad-btn.enter {
+    background: var(--g);
+    color: #fff;
+    border-color: var(--g);
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .numpad-btn.enter:active { background: var(--g-d); }
+  .login-error {
+    font-size: 12px;
+    color: #A32D2D;
+    text-align: center;
+    min-height: 18px;
+    font-weight: 500;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--white);
+    border-radius: var(--r);
+    border: 0.5px solid var(--bd-m);
+    padding: 16px;
+  }
+  .card-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--tx-m);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 12px;
+  }
+
+  /* ── FORM ELEMENTS ── */
+  .field-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--tx-m);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 5px;
+  }
+  .field {
+    width: 100%;
+    background: var(--cream);
+    border: 1px solid var(--bd-m);
+    border-radius: var(--r-sm);
+    padding: 11px 13px;
+    font-family: var(--ff);
+    font-size: 14px;
+    color: var(--tx);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .field:focus { border-color: var(--g); background: var(--white); }
+
+  /* ── BUTTONS ── */
+  .btn {
+    width: 100%;
+    padding: 13px;
+    border-radius: var(--r-sm);
+    border: none;
+    font-family: var(--ff);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+    text-align: center;
+  }
+  .btn:active { transform: scale(0.98); opacity: 0.9; }
+  .btn-g { background: var(--g); color: #fff; }
+  .btn-o { background: var(--o); color: #fff; }
+  .btn-wa { background: #25D366; color: #fff; }
+  .btn-outline { background: transparent; border: 1px solid var(--bd-m); color: var(--tx); }
+
+  /* ── LINK BOX ── */
+  .link-box {
+    background: var(--cream);
+    border: 1px solid var(--bd-m);
+    border-radius: var(--r-sm);
+    padding: 11px 13px;
+    font-family: monospace;
+    font-size: 11px;
+    color: var(--tx-m);
+    word-break: break-all;
+    line-height: 1.5;
+  }
+
+  /* ── METRIC GRID ── */
+  .metric-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .metric-card {
+    border-radius: var(--r-sm);
+    padding: 12px;
+    text-align: center;
+  }
+  .metric-val {
+    font-family: var(--ff-s);
+    font-size: 28px;
+    color: var(--g-d);
+    line-height: 1;
+  }
+  .metric-val.orange { color: var(--o-d); }
+  .metric-lbl {
+    font-size: 10px;
+    color: var(--tx-m);
+    margin-top: 4px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── BARS ── */
+  .bar-item { margin-bottom: 10px; }
+  .bar-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--tx-m);
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+  .bar-bg { height: 6px; background: var(--bd); border-radius: 3px; overflow: hidden; }
+  .bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: var(--g);
+    transition: width 0.6s ease;
+  }
+  .bar-fill.orange { background: var(--o); }
+
+  /* ── FEED ── */
+  .feed-item {
+    display: flex;
+    gap: 10px;
+    padding: 12px 0;
+    border-bottom: 0.5px solid var(--bd);
+  }
+  .feed-item:last-child { border-bottom: none; }
+  .avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--g-l);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--g-d);
+    flex-shrink: 0;
+  }
+  .avatar.o { background: var(--o-l); color: var(--o-d); }
+  .feed-name { font-size: 13px; font-weight: 600; color: var(--tx); }
+  .feed-score { font-size: 12px; font-weight: 700; color: var(--g); }
+  .feed-score.low { color: var(--o); }
+  .feed-txt { font-size: 12px; color: var(--tx-m); margin-top: 2px; line-height: 1.4; }
+  .feed-ts { font-size: 10px; color: var(--tx-s); margin-top: 3px; }
+
+  /* ── PREGUNTAS ── */
+  .q-card {
+    background: var(--white);
+    border-radius: var(--r-sm);
+    border: 0.5px solid var(--bd-m);
+    padding: 12px 14px;
+    margin-bottom: 10px;
+  }
+  .q-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .badge {
+    font-size: 10px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    background: var(--o-l);
+    color: var(--o-d);
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+  .badge-g {
+    background: var(--g-l);
+    color: var(--g-d);
+  }
+  .q-txt { font-size: 13px; font-weight: 600; color: var(--tx); margin-bottom: 6px; }
+  .q-opts { display: flex; flex-wrap: wrap; gap: 4px; }
+  .q-opt {
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    background: var(--g-xl);
+    color: var(--g-d);
+    font-weight: 500;
+  }
+  .drag-handle { font-size: 16px; color: var(--tx-s); cursor: grab; padding: 0 4px; }
+  .btn-add-q {
+    width: 100%;
+    padding: 12px;
+    border-radius: var(--r-sm);
+    border: 1.5px dashed var(--g-m);
+    background: transparent;
+    color: var(--g);
+    font-family: var(--ff);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.15s;
+  }
+  .btn-add-q:hover { background: var(--g-xl); }
+
+  /* ── MODAL para agregar pregunta ── */
+  .modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(27,58,45,0.55);
+    display: none;
+    align-items: flex-end;
+    z-index: 100;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--white);
+    border-radius: 20px 20px 0 0;
+    padding: 24px 20px 36px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    animation: slideUp 0.25s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+  }
+  .modal-title { font-family: var(--ff-s); font-size: 20px; color: var(--g-d); }
+  .modal-close {
+    position: absolute;
+    right: 20px;
+    font-size: 22px;
+    color: var(--tx-s);
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: var(--ff);
+    line-height: 1;
+  }
+  .tipo-selector {
+    display: flex;
+    gap: 8px;
+  }
+  .tipo-btn {
+    flex: 1;
+    padding: 9px 6px;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--bd-m);
+    background: var(--cream);
+    font-family: var(--ff);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--tx-m);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+  }
+  .tipo-btn.active {
+    background: var(--g);
+    color: #fff;
+    border-color: var(--g);
+  }
+
+  /* ── TOAST ── */
+  .toast {
+    position: absolute;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--g-d);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0;
+    transition: all 0.3s;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 200;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ── ESTADOS ── */
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--tx-s);
+  }
+  .empty-state svg { width: 48px; height: 48px; opacity: 0.3; margin-bottom: 12px; }
+  .empty-state p { font-size: 13px; line-height: 1.6; }
+
+  .loading {
+    text-align: center;
+    padding: 30px;
+    color: var(--tx-s);
+    font-size: 13px;
+  }
+
+  .divider { height: 0.5px; background: var(--bd); }
+
+  .section-title {
+    font-family: var(--ff-s);
+    font-size: 22px;
+    color: var(--g-d);
+    line-height: 1.2;
+  }
+  .section-sub {
+    font-size: 13px;
+    color: var(--tx-m);
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- TOPBAR -->
+  <div class="topbar" id="topbar" style="display:none;">
+    <div class="topbar-brand" id="topbar-brand">FeedbackJusto</div>
+    <div class="topbar-sub" id="topbar-sub">Productor</div>
+  </div>
+
+  <!-- SCREEN: LOGIN -->
+  <div class="screen active" id="screen-login">
+    <div class="login-logo">
+      <svg viewBox="0 0 36 36" fill="none">
+        <path d="M18 4C14 4 10.5 7 9.2 11.2C6.5 12 4 14.6 4 17.8C4 21.5 7 24.5 10.5 24.5h15C29 24.5 32 21.5 32 17.8c0-3.2-2.5-6.2-5.2-7C25.5 7 22 4 18 4z" fill="#2D6A4F"/>
+        <path d="M14 30l2.5 2.5L24 23" stroke="#D8EFE3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="login-title">FeedbackJusto</div>
+    <div class="login-sub">Ingresá tu PIN de 4 dígitos<br>para acceder a tu panel</div>
+    <div class="pin-display" id="pin-display">
+      <div class="pin-dot" id="d0">·</div>
+      <div class="pin-dot" id="d1">·</div>
+      <div class="pin-dot" id="d2">·</div>
+      <div class="pin-dot" id="d3">·</div>
+    </div>
+    <div class="login-error" id="login-error"></div>
+    <div class="numpad">
+      <button class="numpad-btn" onclick="pinPress('1')">1</button>
+      <button class="numpad-btn" onclick="pinPress('2')">2</button>
+      <button class="numpad-btn" onclick="pinPress('3')">3</button>
+      <button class="numpad-btn" onclick="pinPress('4')">4</button>
+      <button class="numpad-btn" onclick="pinPress('5')">5</button>
+      <button class="numpad-btn" onclick="pinPress('6')">6</button>
+      <button class="numpad-btn" onclick="pinPress('7')">7</button>
+      <button class="numpad-btn" onclick="pinPress('8')">8</button>
+      <button class="numpad-btn" onclick="pinPress('9')">9</button>
+      <button class="numpad-btn del" onclick="pinDel()">⌫</button>
+      <button class="numpad-btn" onclick="pinPress('0')">0</button>
+      <button class="numpad-btn enter" id="btn-enter" onclick="pinEnter()">OK</button>
+    </div>
+  </div>
+
+  <!-- SCREEN: NUEVO FEEDBACK -->
+  <div class="screen" id="screen-nuevo">
+    <div class="section-title">Nuevo feedback</div>
+    <div class="section-sub">Completá los datos y enviá el link al cliente por WhatsApp.</div>
+    <div>
+      <div class="field-label">Nombre del cliente</div>
+      <input class="field" id="input-cliente" type="text" placeholder="Ej: María González" autocomplete="off">
+    </div>
+    <div>
+      <div class="field-label">Producto vendido</div>
+      <input class="field" id="input-producto" type="text" placeholder="Ej: Queso cremoso 500g" autocomplete="off">
+    </div>
+    <button class="btn btn-g" onclick="generarLink()">Generar link</button>
+
+    <div id="link-result" style="display:none; flex-direction:column; gap:10px;">
+      <div class="divider"></div>
+      <div class="field-label">Link generado</div>
+      <div class="link-box" id="link-box-text"></div>
+      <button class="btn btn-outline" onclick="copiarLink()">Copiar link</button>
+      <button class="btn btn-wa" onclick="enviarWhatsApp()">Enviar por WhatsApp</button>
+    </div>
+  </div>
+
+  <!-- SCREEN: MÉTRICAS -->
+  <div class="screen" id="screen-metricas">
+    <div class="section-title">Mis métricas</div>
+    <div id="metricas-content" class="loading">Cargando...</div>
+  </div>
+
+  <!-- SCREEN: PREGUNTAS -->
+  <div class="screen" id="screen-preguntas">
+    <div class="section-title">Mis preguntas</div>
+    <div class="section-sub">Estas preguntas verá el cliente al abrir el link. Podés reordenarlas o agregar nuevas.</div>
+    <div id="preguntas-list"></div>
+    <button class="btn-add-q" onclick="abrirModal()">+ Agregar pregunta</button>
+    <button class="btn btn-g" id="btn-guardar-preguntas" onclick="guardarPreguntas()" style="margin-top:4px;">Guardar cambios</button>
+  </div>
+
+  <!-- SCREEN: PERFIL -->
+  <div class="screen" id="screen-perfil">
+    <div class="section-title">Mi perfil</div>
+    <div class="card">
+      <div class="card-title">Datos del productor</div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div>
+          <div class="field-label">Nombre</div>
+          <div class="field" style="background:var(--g-xl);cursor:default;" id="perfil-nombre"></div>
+        </div>
+        <div>
+          <div class="field-label">Dominio</div>
+          <div class="field" style="background:var(--g-xl);cursor:default;" id="perfil-dominio"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Sesión</div>
+      <button class="btn btn-outline" onclick="cerrarSesion()">Cerrar sesión</button>
+    </div>
+    <div style="text-align:center;font-size:11px;color:var(--tx-s);padding-top:8px;">
+      FeedbackJusto · Impulsado por Agrojusto
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav" id="bottom-nav" style="display:none;">
+    <div class="nav-item active" data-screen="nuevo" onclick="navTo('nuevo')">
+      <svg viewBox="0 0 20 20" fill="none">
+        <path d="M10 3L3 8.5V17h5v-5h4v5h5V8.5L10 3z" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+      </svg>
+      <span class="nav-txt">Nuevo</span>
+    </div>
+    <div class="nav-item" data-screen="metricas" onclick="navTo('metricas')">
+      <svg viewBox="0 0 20 20" fill="none">
+        <rect x="2.5" y="11" width="4" height="6.5" rx="1.2" stroke="#fff" stroke-width="1.5"/>
+        <rect x="8" y="7.5" width="4" height="10" rx="1.2" stroke="#fff" stroke-width="1.5"/>
+        <rect x="13.5" y="3.5" width="4" height="14" rx="1.2" stroke="#fff" stroke-width="1.5"/>
+      </svg>
+      <span class="nav-txt">Métricas</span>
+    </div>
+    <div class="nav-item" data-screen="preguntas" onclick="navTo('preguntas')">
+      <svg viewBox="0 0 20 20" fill="none">
+        <rect x="2.5" y="4" width="15" height="3" rx="1.5" stroke="#fff" stroke-width="1.5"/>
+        <rect x="2.5" y="8.5" width="10" height="3" rx="1.5" stroke="#fff" stroke-width="1.5"/>
+        <rect x="2.5" y="13" width="12.5" height="3" rx="1.5" stroke="#fff" stroke-width="1.5"/>
+      </svg>
+      <span class="nav-txt">Preguntas</span>
+    </div>
+    <div class="nav-item" data-screen="historial" onclick="navTo('historial')">
+      <svg viewBox="0 0 20 20" fill="none">
+        <circle cx="10" cy="10" r="7" stroke="#fff" stroke-width="1.5"/>
+        <path d="M10 6.5V10l2.5 2.5" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <span class="nav-txt">Historial</span>
+    </div>
+    <div class="nav-item" data-screen="perfil" onclick="navTo('perfil')">
+      <svg viewBox="0 0 20 20" fill="none">
+        <circle cx="10" cy="7" r="3.5" stroke="#fff" stroke-width="1.5"/>
+        <path d="M3.5 17c0-3.59 2.91-6.5 6.5-6.5s6.5 2.91 6.5 6.5" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <span class="nav-txt">Perfil</span>
+    </div>
+  </nav>
+
+  <!-- SCREEN: HISTORIAL -->
+  <div class="screen" id="screen-historial">
+    <div class="section-title">Historial</div>
+    <div id="historial-content" class="loading">Cargando...</div>
+  </div>
+
+  <!-- MODAL: Agregar pregunta -->
+  <div class="modal-overlay" id="modal-overlay" onclick="cerrarModalSiOverlay(event)">
+    <div class="modal">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div class="modal-title">Nueva pregunta</div>
+        <button class="modal-close" onclick="cerrarModal()">×</button>
+      </div>
+      <div>
+        <div class="field-label">Texto de la pregunta</div>
+        <input class="field" id="modal-texto" type="text" placeholder="Ej: ¿Volverías a comprarnos?">
+      </div>
+      <div>
+        <div class="field-label">Tipo de respuesta</div>
+        <div class="tipo-selector">
+          <button class="tipo-btn active" id="tipo-emojis" onclick="setTipo('emojis')">😊 Emojis</button>
+          <button class="tipo-btn" id="tipo-chips" onclick="setTipo('chips')">Chips</button>
+          <button class="tipo-btn" id="tipo-texto" onclick="setTipo('texto')">Texto libre</button>
+        </div>
+      </div>
+      <div id="modal-opciones-wrap">
+        <div class="field-label">Opciones (separadas por coma)</div>
+        <input class="field" id="modal-opciones" type="text" placeholder="Ej: Sí, No, Tal vez">
+      </div>
+      <button class="btn btn-g" onclick="agregarPregunta()">Agregar pregunta</button>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+</div>
+
+<script>
+  const API = "https://script.google.com/macros/s/AKfycbx3_eheEan_MXjDoLLof9kVpQZPBDpgJPUO46BE3BKezfbyjR4Iyx0Vko70j2i5snSQ/exec";
+  const BASE_URL = "https://feedbackjusto.vercel.app"; // Cambiar por tu URL real
+
+  let productor = null;
+  let pinBuffer = "";
+  let preguntas = [];
+  let generatedLink = "";
+  let tipoSeleccionado = "emojis";
+
+  // ── PIN ──────────────────────────────────────────────────
+  function pinPress(n) {
+    if (pinBuffer.length >= 4) return;
+    pinBuffer += n;
+    renderPinDisplay();
+    if (pinBuffer.length === 4) {
+      setTimeout(pinEnter, 180);
+    }
+  }
+
+  function pinDel() {
+    pinBuffer = pinBuffer.slice(0, -1);
+    renderPinDisplay();
+    document.getElementById("login-error").textContent = "";
+    document.querySelectorAll(".pin-dot").forEach(d => d.classList.remove("error"));
+  }
+
+  function renderPinDisplay() {
+    for (let i = 0; i < 4; i++) {
+      const d = document.getElementById("d" + i);
+      if (i < pinBuffer.length) {
+        d.textContent = "●";
+        d.classList.add("filled");
+        d.classList.remove("error");
+      } else {
+        d.textContent = "·";
+        d.classList.remove("filled");
+      }
+    }
+  }
+
+  async function pinEnter() {
+    if (pinBuffer.length < 4) {
+      document.getElementById("login-error").textContent = "Ingresá los 4 dígitos";
+      return;
+    }
+    document.getElementById("btn-enter").textContent = "...";
+    try {
+      const res = await apiCall({ action: "login", pin: pinBuffer });
+      if (res.ok) {
+        productor = res.productor;
+        entrarAlPanel();
+      } else {
+        document.querySelectorAll(".pin-dot").forEach(d => d.classList.add("error"));
+        document.getElementById("login-error").textContent = "PIN incorrecto. Intentá de nuevo.";
+        pinBuffer = "";
+        setTimeout(() => {
+          renderPinDisplay();
+          document.getElementById("btn-enter").textContent = "OK";
+        }, 500);
+      }
+    } catch (e) {
+      document.getElementById("login-error").textContent = "Error de conexión. Revisá internet.";
+      pinBuffer = "";
+      renderPinDisplay();
+      document.getElementById("btn-enter").textContent = "OK";
+    }
+  }
+
+  function entrarAlPanel() {
+    document.getElementById("screen-login").classList.remove("active");
+    document.getElementById("topbar").style.display = "";
+    document.getElementById("bottom-nav").style.display = "";
+    document.getElementById("topbar-brand").textContent = productor.nombre;
+    document.getElementById("topbar-sub").textContent = "Productor verificado ✓";
+    document.getElementById("perfil-nombre").textContent = productor.nombre;
+    document.getElementById("perfil-dominio").textContent = productor.dominio || "—";
+    navTo("nuevo");
+    cargarPreguntas();
+  }
+
+  function cerrarSesion() {
+    productor = null;
+    pinBuffer = "";
+    renderPinDisplay();
+    document.getElementById("login-error").textContent = "";
+    document.getElementById("topbar").style.display = "none";
+    document.getElementById("bottom-nav").style.display = "none";
+    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+    document.getElementById("screen-login").classList.add("active");
+    document.getElementById("btn-enter").textContent = "OK";
+  }
+
+  // ── NAVEGACIÓN ───────────────────────────────────────────
+  function navTo(screen) {
+    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+    document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+    document.getElementById("screen-" + screen).classList.add("active");
+    const navEl = document.querySelector(`[data-screen="${screen}"]`);
+    if (navEl) navEl.classList.add("active");
+
+    if (screen === "metricas") cargarMetricas();
+    if (screen === "historial") cargarHistorial();
+  }
+
+  // ── NUEVO FEEDBACK ───────────────────────────────────────
+  function generarLink() {
+    const cliente = document.getElementById("input-cliente").value.trim();
+    const producto = document.getElementById("input-producto").value.trim();
+    if (!cliente) { showToast("Ingresá el nombre del cliente"); return; }
+    if (!producto) { showToast("Ingresá el producto vendido"); return; }
+
+    const params = new URLSearchParams({
+      p: encodeURIComponent(productor.nombre),
+      c: encodeURIComponent(cliente),
+      prod: encodeURIComponent(producto)
+    });
+    generatedLink = `${BASE_URL}/encuesta.html?${params.toString()}`;
+
+    document.getElementById("link-box-text").textContent = generatedLink;
+    document.getElementById("link-result").style.display = "flex";
+    document.getElementById("link-result").style.flexDirection = "column";
+  }
+
+  function copiarLink() {
+    navigator.clipboard.writeText(generatedLink)
+      .then(() => showToast("Link copiado ✓"))
+      .catch(() => {
+        const el = document.getElementById("link-box-text");
+        const range = document.createRange();
+        range.selectNode(el);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+        showToast("Seleccioná y copiá el link");
+      });
+  }
+
+  function enviarWhatsApp() {
+    const cliente = document.getElementById("input-cliente").value.trim();
+    const msg = encodeURIComponent(`Hola ${cliente}! 😊 Te comparto este link para que nos cuentes cómo fue tu experiencia con tu compra. Son solo 3 preguntas rápidas. ¡Gracias! 👉 ${generatedLink}`);
+    window.open(`https://wa.me/?text=${msg}`, "_blank");
+  }
+
+  // ── MÉTRICAS ─────────────────────────────────────────────
+  async function cargarMetricas() {
+    const el = document.getElementById("metricas-content");
+    el.innerHTML = '<div class="loading">Cargando métricas...</div>';
+    try {
+      const res = await apiCall({ action: "getMetricas", pin: productor.pin });
+      if (!res.ok) { el.innerHTML = `<div class="loading">Error: ${res.error}</div>`; return; }
+      const m = res.metricas;
+
+      const emojiMap = { 1:"😞", 2:"😐", 3:"🙂", 4:"😄", 5:"🤩" };
+      const satEmoji = emojiMap[Math.round(m.satisfaccionPromedio)] || "🙂";
+
+      let html = `
+        <div class="metric-grid">
+          <div class="metric-card" style="background:var(--g-l);">
+            <div class="metric-val">${m.satisfaccionPromedio > 0 ? m.satisfaccionPromedio.toFixed(1) : "—"}</div>
+            <div class="metric-lbl">Satisfacción</div>
+          </div>
+          <div class="metric-card" style="background:var(--white);border:0.5px solid var(--bd-m);">
+            <div class="metric-val">${m.total}</div>
+            <div class="metric-lbl">Respuestas</div>
+          </div>
+        </div>`;
+
+      if (Object.keys(m.destacar).length > 0) {
+        html += `<div class="card"><div class="card-title">Lo que más valoran</div>`;
+        const sorted = Object.entries(m.destacar).sort((a,b) => b[1]-a[1]).slice(0, 5);
+        sorted.forEach(([k, v]) => {
+          html += `<div class="bar-item">
+            <div class="bar-meta"><span>${k}</span><span>${v}%</span></div>
+            <div class="bar-bg"><div class="bar-fill" style="width:${v}%"></div></div>
+          </div>`;
+        });
+        html += `</div>`;
+      }
+
+      if (Object.keys(m.mejorar).length > 0) {
+        const sorted = Object.entries(m.mejorar).sort((a,b) => b[1]-a[1])
+          .filter(([k]) => k !== "Nada, todo bien").slice(0, 5);
+        if (sorted.length > 0) {
+          html += `<div class="card"><div class="card-title">Oportunidades de mejora</div>`;
+          sorted.forEach(([k, v]) => {
+            html += `<div class="bar-item">
+              <div class="bar-meta"><span>${k}</span><span>${v}%</span></div>
+              <div class="bar-bg"><div class="bar-fill orange" style="width:${v}%"></div></div>
+            </div>`;
+          });
+          html += `</div>`;
+        }
+      }
+
+      if (m.total === 0) {
+        html = `<div class="empty-state">
+          <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="2"/><path d="M16 24h16M24 16v16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <p>Todavía no tenés respuestas.<br>Enviá el primer link a un cliente.</p>
+        </div>`;
+      }
+
+      el.innerHTML = html;
+    } catch (e) {
+      el.innerHTML = `<div class="loading">Error de conexión</div>`;
+    }
+  }
+
+  // ── HISTORIAL ────────────────────────────────────────────
+  async function cargarHistorial() {
+    const el = document.getElementById("historial-content");
+    el.innerHTML = '<div class="loading">Cargando historial...</div>';
+    try {
+      const res = await apiCall({ action: "getMetricas", pin: productor.pin });
+      if (!res.ok) { el.innerHTML = `<div class="loading">Error: ${res.error}</div>`; return; }
+      const ultimas = res.metricas.ultimas;
+
+      if (!ultimas || ultimas.length === 0) {
+        el.innerHTML = `<div class="empty-state">
+          <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="2"/><path d="M24 14v10l6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <p>Todavía no hay respuestas registradas.</p>
+        </div>`;
+        return;
+      }
+
+      const emojiMap = { "😞": 1, "😐": 2, "🙂": 3, "😄": 4, "🤩": 5 };
+      let html = `<div class="card" style="padding:0 16px;">`;
+      ultimas.forEach(r => {
+        const score = emojiMap[r.satisfaccion] || 0;
+        const isLow = score <= 2;
+        const initials = (r.cliente || "?").split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
+        html += `
+          <div class="feed-item">
+            <div class="avatar ${isLow ? 'o' : ''}">${initials}</div>
+            <div style="flex:1;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span class="feed-name">${r.cliente || "Anónimo"}</span>
+                <span class="feed-score ${isLow ? 'low' : ''}">${r.satisfaccion || "—"}</span>
+              </div>
+              <div class="feed-txt">${r.comentario || r.producto || ""}</div>
+              <div class="feed-ts">${r.fecha} · ${r.producto || ""}</div>
+            </div>
+          </div>`;
+      });
+      html += `</div>`;
+      el.innerHTML = html;
+    } catch(e) {
+      el.innerHTML = `<div class="loading">Error de conexión</div>`;
+    }
+  }
+
+  // ── PREGUNTAS ────────────────────────────────────────────
+  async function cargarPreguntas() {
+    try {
+      const res = await apiCall({ action: "getPreguntas", pin: productor.pin });
+      if (res.ok) { preguntas = res.preguntas; renderPreguntas(); }
+    } catch(e) {}
+  }
+
+  function renderPreguntas() {
+    const tipos = { emojis: "Emojis", chips: "Chips", texto: "Texto libre" };
+    let html = "";
+    preguntas.forEach((p, i) => {
+      const optsHtml = (p.opciones || []).map(o =>
+        `<span class="q-opt">${o}</span>`).join("");
+      html += `
+        <div class="q-card" data-index="${i}">
+          <div class="q-top">
+            <span class="badge">${tipos[p.tipo] || p.tipo}</span>
+            <span class="drag-handle" title="Reordenar">⠿</span>
+          </div>
+          <div class="q-txt">${p.texto}</div>
+          ${optsHtml ? `<div class="q-opts">${optsHtml}</div>` : ""}
+        </div>`;
+    });
+    document.getElementById("preguntas-list").innerHTML = html;
+  }
+
+  async function guardarPreguntas() {
+    const btn = document.getElementById("btn-guardar-preguntas");
+    btn.textContent = "Guardando...";
+    try {
+      const res = await apiCall({ action: "savePreguntas", pin: productor.pin, preguntas });
+      if (res.ok) showToast("Preguntas guardadas ✓");
+      else showToast("Error al guardar");
+    } catch(e) { showToast("Error de conexión"); }
+    btn.textContent = "Guardar cambios";
+  }
+
+  // ── MODAL ────────────────────────────────────────────────
+  function abrirModal() {
+    document.getElementById("modal-overlay").classList.add("open");
+    document.getElementById("modal-texto").value = "";
+    document.getElementById("modal-opciones").value = "";
+    setTipo("emojis");
+  }
+  function cerrarModal() {
+    document.getElementById("modal-overlay").classList.remove("open");
+  }
+  function cerrarModalSiOverlay(e) {
+    if (e.target === document.getElementById("modal-overlay")) cerrarModal();
+  }
+  function setTipo(t) {
+    tipoSeleccionado = t;
+    ["emojis","chips","texto"].forEach(x => {
+      document.getElementById("tipo-"+x).classList.toggle("active", x === t);
+    });
+    document.getElementById("modal-opciones-wrap").style.display =
+      t === "texto" ? "none" : "block";
+    if (t === "emojis") {
+      document.getElementById("modal-opciones").value = "😞,😐,🙂,😄,🤩";
+    } else if (t === "chips") {
+      document.getElementById("modal-opciones").value = "";
+    }
+  }
+  function agregarPregunta() {
+    const texto = document.getElementById("modal-texto").value.trim();
+    if (!texto) { showToast("Escribí el texto de la pregunta"); return; }
+    const opciones = tipoSeleccionado !== "texto"
+      ? document.getElementById("modal-opciones").value.split(",").map(s=>s.trim()).filter(Boolean)
+      : [];
+    preguntas.push({ id: String(Date.now()), texto, tipo: tipoSeleccionado, opciones });
+    renderPreguntas();
+    cerrarModal();
+    showToast("Pregunta agregada. Recordá guardar.");
+  }
+
+  // ── API CALL ─────────────────────────────────────────────
+  async function apiCall(data) {
+    const res = await fetch(API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+    return res.json();
+  }
+
+  // ── TOAST ────────────────────────────────────────────────
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 2500);
+  }
+</script>
+</body>
+</html>
