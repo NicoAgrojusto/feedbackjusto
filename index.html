@@ -1035,11 +1035,8 @@
 
   // ── API CALL ─────────────────────────────────────────────
   async function apiCall(data) {
-    const res = await fetch(API, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
-    });
+    const params = new URLSearchParams({ payload: JSON.stringify(data) });
+    const res = await fetch(API + "?" + params.toString());
     return res.json();
   }
 
