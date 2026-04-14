@@ -199,21 +199,16 @@ html,body{min-height:100%;font-family:var(--ff);background:var(--sand);color:var
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-const API="https://script.google.com/macros/s/AKfycbx3_eheEan_MXjDoLLof9kVpQZPBDpgJPUO46BE3BKezfbyjR4Iyx0Vko70j2i5snSQ/exec";
-let dashData=null, masterPin="";
+const API = "https://script.google.com/macros/s/AKfycbx3_eheEan_MXjDoLLof9kVpQZPBDpgJPUO46BE3BKezfbyjR4Iyx0Vko70j2i5snSQ/exec";
+let dashData = null;
+let masterPin = "";
 let cDonut, cRanking, cActividad, cDestacar, cMejorar, cEvolucion;
-const COL={excelente:"#2D6A4F",bien:"#52B788",regular:"#E76F28",alerta:"#E24B4A",sin_datos:"#B4B2A9"};
-const LBL={excelente:"Excelente (4–5)",bien:"Bien (3–4)",regular:"Regular (2–3)",alerta:"Alerta (<2)",sin_datos:"Sin datos"};
-const EN={"😞":1,"😐":2,"🙂":3,"😄":4,"🤩":5};
+const COL = { excelente:"#2D6A4F", bien:"#52B788", regular:"#E76F28", alerta:"#E24B4A", sin_datos:"#B4B2A9" };
+const LBL = { excelente:"Excelente (4-5)", bien:"Bien (3-4)", regular:"Regular (2-3)", alerta:"Alerta (<2)", sin_datos:"Sin datos" };
+const EN = { "😞":1, "😐":2, "🙂":3, "😄":4, "🤩":5 };
 
-// Punto de entrada: espera que el DOM esté listo
 window.addEventListener("DOMContentLoaded", function() {
-  const urlPin = new URLSearchParams(window.location.search).get("autopin");
-  if (!urlPin || urlPin.length !== 4) {
-    mostrarError("Acceso denegado. Ingresá desde la app principal.");
-    return;
-  }
-  masterPin = urlPin;
+  masterPin = new URLSearchParams(window.location.search).get("autopin") || "";
   cargarDashboard();
 });
 
@@ -229,7 +224,7 @@ async function cargarDashboard() {
       renderCharts();
       renderOrgs("todos");
     } else {
-      mostrarError("PIN incorrecto. Volvé a la app principal.");
+      mostrarError("No se pudieron cargar los datos.");
     }
   } catch(e) {
     mostrarError("Error de conexión. Revisá tu internet.");
@@ -241,25 +236,24 @@ function mostrarPantalla(id) {
     const el = document.getElementById(s);
     if (el) el.style.display = "none";
   });
-  const target = document.getElementById(id);
-  if (target) target.style.display = "flex";
+  const el = document.getElementById(id);
+  if (el) el.style.display = "flex";
 }
 
 function mostrarError(msg) {
-  mostrarPantalla("loading");
-  document.getElementById("loading").innerHTML =
-    '<div style="text-align:center;padding:40px;color:var(--tx-m);font-size:14px;">' + msg + '</div>';
+  document.getElementById("loading").style.display = "flex";
+  document.getElementById("loading").innerHTML = '<p style="text-align:center;padding:40px;color:var(--tx-m);font-size:14px;">' + msg + '</p>';
 }
 
 function renderMetrics() {
   const d = dashData, s = d.satisfaccionPromedio;
-  const se = s>=4?"😄":s>=3?"🙂":s>=2?"😐":s>0?"😞":"—";
+  const se = s>=4?"😄":s>=3?"🙂":s>=2?"😐":s>0?"😞":"";
   document.getElementById("metric-grid").innerHTML = `
     <div class="mcard" style="background:var(--g-l);">
       <div class="mval">${d.totalRespuestas}</div><div class="mlbl">Respuestas totales</div>
     </div>
     <div class="mcard" style="background:var(--g-xl);border:0.5px solid var(--bd);">
-      <div class="mval">${s>0?s.toFixed(1):"—"} ${s>0?se:""}</div><div class="mlbl">Satisfacción global</div>
+      <div class="mval">${s>0?s.toFixed(1):"—"} ${se}</div><div class="mlbl">Satisfacción global</div>
     </div>
     <div class="mcard" style="background:var(--g-xl);border:0.5px solid var(--bd);">
       <div class="mval">${d.orgsActivas}</div><div class="mlbl">Orgs activas</div>
@@ -280,10 +274,8 @@ function renderCharts() {
     data: { labels: dKeys, datasets: [{ data: dKeys.map(k=>dist[k]), backgroundColor: dKeys.map(k=>COL[k]), borderWidth: 0 }] },
     options: {
       responsive: true, maintainAspectRatio: false, cutout: "65%",
-      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => " " + ctx.raw + " orgs" } } },
-      onClick: (e, els) => {
-        if (els.length) filtrarNivel(dKeys[els[0].index]);
-      }
+      plugins: { legend: { display: false } },
+      onClick: (e, els) => { if (els.length) filtrarNivel(dKeys[els[0].index]); }
     }
   });
   document.getElementById("donut-legend").innerHTML = dKeys.map(k => `
@@ -293,8 +285,7 @@ function renderCharts() {
     </div>`).join("");
 
   const top = d.orgs.filter(o => o.total > 0).slice(0, 10);
-  const rh = Math.max(200, top.length * 28 + 50);
-  document.getElementById("ranking-wrap").style.height = rh + "px";
+  document.getElementById("ranking-wrap").style.height = Math.max(200, top.length * 28 + 50) + "px";
   if (cRanking) cRanking.destroy();
   cRanking = new Chart(document.getElementById("chartRanking"), {
     type: "bar",
@@ -304,10 +295,10 @@ function renderCharts() {
     },
     options: {
       indexAxis: "y", responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => " " + ctx.raw + " / 5" } } },
+      plugins: { legend: { display: false } },
       scales: {
-        x: { min: 0, max: 5, ticks: { font: { size: 9 }, color: "#8FA898", stepSize: 1 }, grid: { color: "rgba(45,106,79,0.08)" } },
-        y: { ticks: { font: { size: 10 }, color: "#4A6356" }, grid: { display: false } }
+        x: { min:0, max:5, ticks:{font:{size:9},color:"#8FA898",stepSize:1}, grid:{color:"rgba(45,106,79,0.08)"} },
+        y: { ticks:{font:{size:10},color:"#4A6356"}, grid:{display:false} }
       },
       onClick: (e, els) => { if (els.length) abrirDetalle(top[els[0].index].nombre); }
     }
@@ -318,14 +309,14 @@ function renderCharts() {
     type: "line",
     data: {
       labels: d.actividadSemanal.map(s => s.label),
-      datasets: [{ data: d.actividadSemanal.map(s => s.count), borderColor: "#2D6A4F", backgroundColor: "rgba(45,106,79,0.08)", borderWidth: 2, pointBackgroundColor: "#2D6A4F", pointRadius: 3, fill: true, tension: 0.4 }]
+      datasets: [{ data: d.actividadSemanal.map(s => s.count), borderColor:"#2D6A4F", backgroundColor:"rgba(45,106,79,0.08)", borderWidth:2, pointBackgroundColor:"#2D6A4F", pointRadius:3, fill:true, tension:0.4 }]
     },
     options: {
       responsive: true, maintainAspectRatio: false,
       plugins: { legend: { display: false } },
       scales: {
-        y: { ticks: { font: { size: 9 }, color: "#8FA898" }, grid: { color: "rgba(45,106,79,0.08)" } },
-        x: { ticks: { font: { size: 9 }, color: "#8FA898" }, grid: { display: false } }
+        y: { ticks:{font:{size:9},color:"#8FA898"}, grid:{color:"rgba(45,106,79,0.08)"} },
+        x: { ticks:{font:{size:9},color:"#8FA898"}, grid:{display:false} }
       }
     }
   });
@@ -333,7 +324,7 @@ function renderCharts() {
 
 function filtrarNivel(n) {
   const chip = document.querySelector('[data-n="' + n + '"]');
-  if (chip) { filtrar(chip); document.getElementById("orgs-list").scrollIntoView({ behavior: "smooth" }); }
+  if (chip) { filtrar(chip); document.getElementById("orgs-list").scrollIntoView({ behavior:"smooth" }); }
 }
 
 function filtrar(chip) {
@@ -370,7 +361,7 @@ async function abrirDetalle(nombre) {
   document.getElementById("det-nombre").textContent = nombre;
   const org = dashData.orgs.find(o => o.nombre === nombre);
   try {
-    const res = await api({ action: "getMetricasMaestro", pin: masterPin, orgNombre: nombre });
+    const res = await api({ action:"getMetricasMaestro", pin:masterPin, orgNombre:nombre });
     mostrarPantalla("detalle-wrap");
     renderDetalle(nombre, org, res.ok ? res.metricas : null);
   } catch(e) {
@@ -407,13 +398,13 @@ function renderDetalle(nombre, org, m) {
   if (cDestacar) cDestacar.destroy();
   if (dest.length) cDestacar = new Chart(document.getElementById("chartDestacar"), {
     type:"bar", data:{ labels:dest.map(([k])=>k), datasets:[{ data:dest.map(([,v])=>v), backgroundColor:"#2D6A4F", borderRadius:4, borderWidth:0 }] },
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ x:{ticks:{font:{size:9},color:"#8FA898"},grid:{display:false}}, y:{ticks:{font:{size:9},color:"#8FA898",callback:v=>v+"%"},grid:{color:"rgba(45,106,79,0.08)"},max:100} } }
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ x:{ticks:{font:{size:9},color:"#8FA898"},grid:{display:false}}, y:{max:100,ticks:{font:{size:9},color:"#8FA898",callback:v=>v+"%"},grid:{color:"rgba(45,106,79,0.08)"}} } }
   });
 
   if (cMejorar) cMejorar.destroy();
   if (mej.length) cMejorar = new Chart(document.getElementById("chartMejorar"), {
     type:"bar", data:{ labels:mej.map(([k])=>k), datasets:[{ data:mej.map(([,v])=>v), backgroundColor:"#E76F28", borderRadius:4, borderWidth:0 }] },
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ x:{ticks:{font:{size:9},color:"#8FA898"},grid:{display:false}}, y:{ticks:{font:{size:9},color:"#8FA898",callback:v=>v+"%"},grid:{color:"rgba(45,106,79,0.08)"},max:100} } }
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ x:{ticks:{font:{size:9},color:"#8FA898"},grid:{display:false}}, y:{max:100,ticks:{font:{size:9},color:"#8FA898",callback:v=>v+"%"},grid:{color:"rgba(45,106,79,0.08)"}} } }
   });
 
   if (cEvolucion) cEvolucion.destroy();
@@ -429,7 +420,7 @@ function renderDetalle(nombre, org, m) {
     return `<div class="hist-item">
       <div class="h-av ${sc<=2?"o":""}">${init}</div>
       <div style="flex:1;">
-        <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div style="display:flex;justify-content:space-between;">
           <span style="font-size:12px;font-weight:600;color:var(--tx);">${r.cliente||"Anónimo"}</span>
           <span style="font-size:13px;font-weight:700;color:${sc<=2?"var(--o)":"var(--g)"};">${r.satisfaccion||"—"}</span>
         </div>
