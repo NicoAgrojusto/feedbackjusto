@@ -832,7 +832,7 @@
       if (res.ok) {
         productor = res.productor;
         if (productor.nombre === "MAESTRO") {
-          window.location.href = "/dashboard.html";
+          window.location.href = "/dashboard.html?autopin=" + pinBuffer;
           return;
         }
         entrarAlPanel();
