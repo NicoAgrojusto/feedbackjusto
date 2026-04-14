@@ -75,12 +75,12 @@
     font-weight: 400;
   }
 
-  /* ── BOTTOM NAV ── */
+  /* ── TOP NAV ── */
   .bottom-nav {
     background: var(--g-d);
     display: flex;
-    padding: 0 4px 2px;
-    border-top: 1px solid rgba(255,255,255,0.07);
+    padding: 0 4px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
     flex-shrink: 0;
   }
   .nav-item {
@@ -89,13 +89,13 @@
     flex-direction: column;
     align-items: center;
     gap: 3px;
-    padding: 10px 4px 8px;
-    border-top: 2.5px solid transparent;
+    padding: 8px 4px 9px;
+    border-bottom: 2.5px solid transparent;
     cursor: pointer;
     transition: border-color 0.2s;
     user-select: none;
   }
-  .nav-item.active { border-top-color: var(--o); }
+  .nav-item.active { border-bottom-color: var(--o); }
   .nav-item svg { width: 20px; height: 20px; opacity: 0.4; transition: opacity 0.2s; }
   .nav-item.active svg { opacity: 1; }
   .nav-txt {
@@ -330,16 +330,52 @@
   }
   .bar-fill.orange { background: var(--o); }
 
-  /* ── FEED ── */
-  .feed-item {
-    display: flex;
-    gap: 10px;
-    padding: 12px 0;
-    border-bottom: 0.5px solid var(--bd);
+  /* ── FEED / TARJETAS HISTORIAL ── */
+  .hist-card {
+    background: var(--white);
+    border-radius: var(--r);
+    border: 0.5px solid var(--bd-m);
+    overflow: hidden;
+    margin-bottom: 10px;
   }
-  .feed-item:last-child { border-bottom: none; }
+  .hist-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: background 0.15s;
+    user-select: none;
+  }
+  .hist-header:active { background: var(--g-xl); }
+  .hist-body {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    padding: 0 14px 14px;
+    border-top: 0.5px solid var(--bd);
+  }
+  .hist-body.open { display: flex; }
+  .hist-chevron {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--tx-s);
+    transition: transform 0.2s;
+  }
+  .hist-chevron.open { transform: rotate(180deg); }
+  .hist-detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 6px 0;
+    border-bottom: 0.5px solid var(--bd);
+    gap: 12px;
+  }
+  .hist-detail-row:last-child { border-bottom: none; }
+  .hist-detail-lbl { font-size: 11px; font-weight: 600; color: var(--tx-s); text-transform: uppercase; letter-spacing: 0.04em; flex-shrink: 0; }
+  .hist-detail-val { font-size: 13px; color: var(--tx); text-align: right; line-height: 1.4; }
   .avatar {
-    width: 32px; height: 32px;
+    width: 34px; height: 34px;
     border-radius: 50%;
     background: var(--g-l);
     display: flex; align-items: center; justify-content: center;
@@ -350,10 +386,9 @@
   }
   .avatar.o { background: var(--o-l); color: var(--o-d); }
   .feed-name { font-size: 13px; font-weight: 600; color: var(--tx); }
-  .feed-score { font-size: 12px; font-weight: 700; color: var(--g); }
+  .feed-score { font-size: 14px; font-weight: 700; color: var(--g); }
   .feed-score.low { color: var(--o); }
-  .feed-txt { font-size: 12px; color: var(--tx-m); margin-top: 2px; line-height: 1.4; }
-  .feed-ts { font-size: 10px; color: var(--tx-s); margin-top: 3px; }
+  .feed-ts { font-size: 10px; color: var(--tx-s); margin-top: 1px; }
 
   /* ── PREGUNTAS ── */
   .q-card {
@@ -469,6 +504,25 @@
     border-color: var(--g);
   }
 
+  /* ── INSTALL BANNER ── */
+  .install-banner {
+    background: var(--g-d);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin: 0 18px 12px;
+    flex-shrink: 0;
+  }
+  .install-icon { width: 34px; height: 34px; border-radius: 9px; background: var(--g-l); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .install-icon svg { width: 18px; height: 18px; }
+  .install-txt { flex: 1; }
+  .install-ttl { font-size: 12px; font-weight: 600; color: #fff; }
+  .install-sub { font-size: 10px; color: rgba(255,255,255,0.55); margin-top: 2px; }
+  .install-btn { font-size: 11px; font-weight: 600; color: var(--g-d); background: #fff; border: none; border-radius: 8px; padding: 7px 12px; cursor: pointer; flex-shrink: 0; }
+  .install-close { font-size: 16px; color: rgba(255,255,255,0.4); cursor: pointer; padding: 0 4px; flex-shrink: 0; }
+
   /* ── TOAST ── */
   .toast {
     position: absolute;
@@ -530,6 +584,47 @@
   <!-- TOPBAR -->
   <div class="topbar" id="topbar" style="display:none;">
     <div class="topbar-brand" id="topbar-brand">FeedbackJusto</div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav" id="bottom-nav" style="display:none;">
+    <div class="nav-item active" data-screen="nuevo" onclick="navTo('nuevo')">
+      <svg viewBox="0 0 20 20" fill="none">
+        <path d="M10 3L3 8.5V17h5v-5h4v5h5V8.5L10 3z" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+      </svg>
+      <span class="nav-txt">Nuevo</span>
+    </div>
+    <div class="nav-item" data-screen="metricas" onclick="navTo('metricas')">
+      <svg viewBox="0 0 20 20" fill="none">
+        <rect x="2.5" y="11" width="4" height="6.5" rx="1.2" stroke="#fff" stroke-width="1.5"/>
+        <rect x="8" y="7.5" width="4" height="10" rx="1.2" stroke="#fff" stroke-width="1.5"/>
+        <rect x="13.5" y="3.5" width="4" height="14" rx="1.2" stroke="#fff" stroke-width="1.5"/>
+      </svg>
+      <span class="nav-txt">Métricas</span>
+    </div>
+    <div class="nav-item" data-screen="preguntas" onclick="navTo('preguntas')">
+      <svg viewBox="0 0 20 20" fill="none">
+        <rect x="2.5" y="4" width="15" height="3" rx="1.5" stroke="#fff" stroke-width="1.5"/>
+        <rect x="2.5" y="8.5" width="10" height="3" rx="1.5" stroke="#fff" stroke-width="1.5"/>
+        <rect x="2.5" y="13" width="12.5" height="3" rx="1.5" stroke="#fff" stroke-width="1.5"/>
+      </svg>
+      <span class="nav-txt">Preguntas</span>
+    </div>
+    <div class="nav-item" data-screen="historial" onclick="navTo('historial')">
+      <svg viewBox="0 0 20 20" fill="none">
+        <circle cx="10" cy="10" r="7" stroke="#fff" stroke-width="1.5"/>
+        <path d="M10 6.5V10l2.5 2.5" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <span class="nav-txt">Historial</span>
+    </div>
+    <div class="nav-item" data-screen="perfil" onclick="navTo('perfil')">
+      <svg viewBox="0 0 20 20" fill="none">
+        <circle cx="10" cy="7" r="3.5" stroke="#fff" stroke-width="1.5"/>
+        <path d="M3.5 17c0-3.59 2.91-6.5 6.5-6.5s6.5 2.91 6.5 6.5" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <span class="nav-txt">Perfil</span>
+    </div>
+  </nav>
+
     <div class="topbar-sub" id="topbar-sub">Productor</div>
   </div>
 
@@ -629,45 +724,7 @@
     </div>
   </div>
 
-  <!-- BOTTOM NAV -->
-  <nav class="bottom-nav" id="bottom-nav" style="display:none;">
-    <div class="nav-item active" data-screen="nuevo" onclick="navTo('nuevo')">
-      <svg viewBox="0 0 20 20" fill="none">
-        <path d="M10 3L3 8.5V17h5v-5h4v5h5V8.5L10 3z" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
-      </svg>
-      <span class="nav-txt">Nuevo</span>
-    </div>
-    <div class="nav-item" data-screen="metricas" onclick="navTo('metricas')">
-      <svg viewBox="0 0 20 20" fill="none">
-        <rect x="2.5" y="11" width="4" height="6.5" rx="1.2" stroke="#fff" stroke-width="1.5"/>
-        <rect x="8" y="7.5" width="4" height="10" rx="1.2" stroke="#fff" stroke-width="1.5"/>
-        <rect x="13.5" y="3.5" width="4" height="14" rx="1.2" stroke="#fff" stroke-width="1.5"/>
-      </svg>
-      <span class="nav-txt">Métricas</span>
-    </div>
-    <div class="nav-item" data-screen="preguntas" onclick="navTo('preguntas')">
-      <svg viewBox="0 0 20 20" fill="none">
-        <rect x="2.5" y="4" width="15" height="3" rx="1.5" stroke="#fff" stroke-width="1.5"/>
-        <rect x="2.5" y="8.5" width="10" height="3" rx="1.5" stroke="#fff" stroke-width="1.5"/>
-        <rect x="2.5" y="13" width="12.5" height="3" rx="1.5" stroke="#fff" stroke-width="1.5"/>
-      </svg>
-      <span class="nav-txt">Preguntas</span>
-    </div>
-    <div class="nav-item" data-screen="historial" onclick="navTo('historial')">
-      <svg viewBox="0 0 20 20" fill="none">
-        <circle cx="10" cy="10" r="7" stroke="#fff" stroke-width="1.5"/>
-        <path d="M10 6.5V10l2.5 2.5" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
-      </svg>
-      <span class="nav-txt">Historial</span>
-    </div>
-    <div class="nav-item" data-screen="perfil" onclick="navTo('perfil')">
-      <svg viewBox="0 0 20 20" fill="none">
-        <circle cx="10" cy="7" r="3.5" stroke="#fff" stroke-width="1.5"/>
-        <path d="M3.5 17c0-3.59 2.91-6.5 6.5-6.5s6.5 2.91 6.5 6.5" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
-      </svg>
-      <span class="nav-txt">Perfil</span>
-    </div>
-  </nav>
+
 
   <!-- SCREEN: HISTORIAL -->
   <div class="screen" id="screen-historial">
@@ -704,6 +761,22 @@
 
   <!-- TOAST -->
   <div class="toast" id="toast"></div>
+
+  <!-- INSTALL BANNER -->
+  <div class="install-banner" id="install-banner" style="display:none;">
+    <div class="install-icon">
+      <svg viewBox="0 0 18 18" fill="none">
+        <path d="M9 2v9M6 8l3 3 3-3" stroke="#2D6A4F" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="2" y="12" width="14" height="3" rx="1.5" stroke="#2D6A4F" stroke-width="1.4"/>
+      </svg>
+    </div>
+    <div class="install-txt">
+      <div class="install-ttl">Instalá la app</div>
+      <div class="install-sub">Accedé desde tu pantalla de inicio</div>
+    </div>
+    <button class="install-btn" onclick="instalarPWA()">Instalar</button>
+    <span class="install-close" onclick="document.getElementById('install-banner').style.display='none'">×</span>
+  </div>
 
 </div>
 
@@ -820,9 +893,9 @@
     if (!producto) { showToast("Ingresá el producto vendido"); return; }
 
     const params = new URLSearchParams({
-      p: encodeURIComponent(productor.nombre),
-      c: encodeURIComponent(cliente),
-      prod: encodeURIComponent(producto)
+      p: productor.nombre,
+      c: cliente,
+      prod: producto
     });
     generatedLink = `${BASE_URL}/encuesta.html?${params.toString()}`;
 
@@ -868,9 +941,9 @@
             <div class="metric-val">${m.satisfaccionPromedio > 0 ? m.satisfaccionPromedio.toFixed(1) : "—"}</div>
             <div class="metric-lbl">Satisfacción</div>
           </div>
-          <div class="metric-card" style="background:var(--white);border:0.5px solid var(--bd-m);">
+          <div class="metric-card" style="background:var(--white);border:0.5px solid var(--bd-m);cursor:pointer;" onclick="navTo('historial')">
             <div class="metric-val">${m.total}</div>
-            <div class="metric-lbl">Respuestas</div>
+            <div class="metric-lbl">Respuestas ↗</div>
           </div>
         </div>`;
 
@@ -932,29 +1005,82 @@
       }
 
       const emojiMap = { "😞": 1, "😐": 2, "🙂": 3, "😄": 4, "🤩": 5 };
-      let html = `<div class="card" style="padding:0 16px;">`;
-      ultimas.forEach(r => {
+      let html = "";
+      ultimas.forEach((r, i) => {
         const score = emojiMap[r.satisfaccion] || 0;
         const isLow = score <= 2;
         const initials = (r.cliente || "?").split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
+        // Limpiar fecha: manejar cualquier formato
+        let fecha = r.fecha || "";
+        try {
+          const d = new Date(fecha);
+          if (!isNaN(d.getTime())) {
+            const dia = String(d.getDate()).padStart(2,"0");
+            const mes = String(d.getMonth()+1).padStart(2,"0");
+            const anio = d.getFullYear();
+            const hrs = String(d.getHours()).padStart(2,"0");
+            const min = String(d.getMinutes()).padStart(2,"0");
+            fecha = `${dia}/${mes}/${anio} ${hrs}:${min}`;
+          }
+        } catch(e) {}
+        // Limpiar producto: si tiene URL, extraer el param prod=
+        let producto = r.producto || "";
+        if (producto.includes("feedbackjusto") || producto.includes("http")) {
+          try {
+            const urlPart = producto.includes("?") ? producto.split("?")[1] : "";
+            const p = new URLSearchParams(urlPart);
+            producto = p.get("prod") || p.get("p") || "—";
+          } catch(e) { producto = "—"; }
+        }
+        const destacar = r.destacar || "";
+        const mejorar = r.mejorar || "";
+        const comentario = r.comentario || "";
         html += `
-          <div class="feed-item">
-            <div class="avatar ${isLow ? 'o' : ''}">${initials}</div>
-            <div style="flex:1;">
-              <div style="display:flex;justify-content:space-between;align-items:center;">
-                <span class="feed-name">${r.cliente || "Anónimo"}</span>
-                <span class="feed-score ${isLow ? 'low' : ''}">${r.satisfaccion || "—"}</span>
+          <div class="hist-card">
+            <div class="hist-header" onclick="toggleHistCard(this)">
+              <div class="avatar ${isLow ? 'o' : ''}">${initials}</div>
+              <div style="flex:1;">
+                <div class="feed-name">${r.cliente || "Anónimo"}</div>
+                <div class="feed-ts">${fecha} · ${r.producto || ""}</div>
               </div>
-              <div class="feed-txt">${r.comentario || r.producto || ""}</div>
-              <div class="feed-ts">${r.fecha} · ${r.producto || ""}</div>
+              <span class="feed-score ${isLow ? 'low' : ''}">${r.satisfaccion || "—"}</span>
+              <span class="hist-chevron">▼</span>
+            </div>
+            <div class="hist-body">
+              <div class="hist-detail-row">
+                <span class="hist-detail-lbl">Producto</span>
+                <span class="hist-detail-val">${r.producto || "—"}</span>
+              </div>
+              <div class="hist-detail-row">
+                <span class="hist-detail-lbl">Satisfacción</span>
+                <span class="hist-detail-val">${r.satisfaccion || "—"}</span>
+              </div>
+              ${destacar ? `<div class="hist-detail-row">
+                <span class="hist-detail-lbl">Destacó</span>
+                <span class="hist-detail-val">${destacar}</span>
+              </div>` : ""}
+              ${mejorar ? `<div class="hist-detail-row">
+                <span class="hist-detail-lbl">Mejoraría</span>
+                <span class="hist-detail-val">${mejorar}</span>
+              </div>` : ""}
+              ${comentario ? `<div class="hist-detail-row">
+                <span class="hist-detail-lbl">Comentario</span>
+                <span class="hist-detail-val">${comentario}</span>
+              </div>` : ""}
             </div>
           </div>`;
       });
-      html += `</div>`;
       el.innerHTML = html;
     } catch(e) {
       el.innerHTML = `<div class="loading">Error de conexión</div>`;
     }
+  }
+
+  function toggleHistCard(header) {
+    const body = header.nextElementSibling;
+    const chevron = header.querySelector(".hist-chevron");
+    body.classList.toggle("open");
+    chevron.classList.toggle("open");
   }
 
   // ── PREGUNTAS ────────────────────────────────────────────
@@ -1047,6 +1173,25 @@
     t.classList.add("show");
     setTimeout(() => t.classList.remove("show"), 2500);
   }
+
+  // ── PWA INSTALL ───────────────────────────────────────────
+  let deferredPrompt = null;
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    document.getElementById("install-banner").style.display = "flex";
+  });
+  function instalarPWA() {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(() => {
+      deferredPrompt = null;
+      document.getElementById("install-banner").style.display = "none";
+    });
+  }
+  window.addEventListener("appinstalled", () => {
+    document.getElementById("install-banner").style.display = "none";
+  });
 </script>
 </body>
 </html>
