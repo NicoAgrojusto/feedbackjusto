@@ -831,6 +831,10 @@
       const res = await apiCall({ action: "login", pin: pinBuffer });
       if (res.ok) {
         productor = res.productor;
+        if (productor.nombre === "MAESTRO") {
+          window.location.href = "/dashboard.html";
+          return;
+        }
         entrarAlPanel();
       } else {
         document.querySelectorAll(".pin-dot").forEach(d => d.classList.add("error"));
