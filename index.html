@@ -1178,6 +1178,11 @@
     setTimeout(() => t.classList.remove("show"), 2500);
   }
 
+  // ── SERVICE WORKER ───────────────────────────────────────────
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/sw.js").catch(() => {});
+  }
+
   // ── PWA INSTALL ───────────────────────────────────────────
   let deferredPrompt = null;
   window.addEventListener("beforeinstallprompt", (e) => {
