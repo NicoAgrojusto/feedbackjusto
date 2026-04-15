@@ -127,12 +127,12 @@
     background: var(--cream);
   }
   .login-logo {
-    width: 64px; height: 64px;
-    background: var(--g-l);
-    border-radius: 18px;
+    background: var(--white);
+    border-radius: 14px;
+    border: 0.5px solid var(--bd-m);
     display: flex; align-items: center; justify-content: center;
+    padding: 6px 10px;
   }
-  .login-logo svg { width: 36px; height: 36px; }
   .login-title {
     font-family: var(--ff-s);
     font-size: 26px;
@@ -504,6 +504,27 @@
     border-color: var(--g);
   }
 
+  /* ── GUIA MODAL ── */
+  .guia-overlay { position:absolute; inset:0; background:rgba(27,58,45,0.6); display:none; align-items:flex-end; z-index:300; }
+  .guia-overlay.open { display:flex; }
+  .guia-modal { background:var(--white); width:100%; border-radius:20px 20px 0 0; padding:24px 20px 40px; animation:slideUp 0.25s ease; max-height:85vh; overflow-y:auto; }
+  .guia-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+  .guia-title { font-family:var(--ff-s); font-size:20px; color:var(--g-d); }
+  .guia-close { font-size:24px; color:var(--tx-s); cursor:pointer; background:none; border:none; font-family:var(--ff); line-height:1; }
+  .guia-tabs { display:flex; gap:8px; margin-bottom:16px; }
+  .guia-tab { flex:1; padding:8px; border-radius:8px; border:1px solid var(--bd-m); background:var(--white); font-family:var(--ff); font-size:12px; font-weight:500; color:var(--tx-m); cursor:pointer; text-align:center; transition:all 0.15s; }
+  .guia-tab.active { background:var(--g); color:#fff; border-color:var(--g); }
+  .guia-content { display:none; }
+  .guia-content.active { display:block; }
+  .guia-steps { display:flex; flex-direction:column; }
+  .guia-step { display:flex; gap:14px; align-items:flex-start; padding:14px 0; border-bottom:0.5px solid var(--bd); }
+  .guia-step:last-child { border-bottom:none; }
+  .guia-num { width:30px; height:30px; border-radius:50%; background:var(--g); color:#fff; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; flex-shrink:0; margin-top:2px; }
+  .guia-txt { flex:1; }
+  .guia-step-title { font-size:14px; font-weight:600; color:var(--tx); margin-bottom:3px; }
+  .guia-step-sub { font-size:12px; color:var(--tx-m); line-height:1.5; }
+  .guia-img { background:var(--white); border-radius:10px; border:0.5px solid var(--bd-m); padding:12px; margin-top:8px; display:flex; align-items:center; justify-content:center; }
+
   /* ── INSTALL BANNER ── */
   .install-banner {
     background: var(--g-d);
@@ -631,9 +652,13 @@
   <!-- SCREEN: LOGIN -->
   <div class="screen active" id="screen-login">
     <div class="login-logo">
-      <svg viewBox="0 0 36 36" fill="none">
-        <path d="M18 4C14 4 10.5 7 9.2 11.2C6.5 12 4 14.6 4 17.8C4 21.5 7 24.5 10.5 24.5h15C29 24.5 32 21.5 32 17.8c0-3.2-2.5-6.2-5.2-7C25.5 7 22 4 18 4z" fill="#2D6A4F"/>
-        <path d="M14 30l2.5 2.5L24 23" stroke="#D8EFE3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 527 300" style="width:160px;height:90px;">
+        <defs><style>.cls-1{fill:#093d30;}</style></defs>
+        <rect width="527" height="300" fill="#fff"/>
+        <path class="cls-1" d="M371.3,192.11a6.65,6.65,0,0,1,4.47,7.06c-.08.74-.18,1.47-.28,2.21-.14,1-.29,2-.46,3q-.82,5-2.08,9.81c-.21.8-.43,1.6-.65,2.4a112.54,112.54,0,0,1-6.71,17.71h0q-.85,1.78-1.77,3.51a112.28,112.28,0,0,1-113,59.41,1.86,1.86,0,0,1-.94-3.29,335.22,335.22,0,0,1,94.46-52.74,335.44,335.44,0,0,0-114.47,46.68,10.91,10.91,0,0,1-10.3.84,112.27,112.27,0,0,1-26.25-16.07,4.56,4.56,0,0,1,.47-7.36,334.13,334.13,0,0,1,152-50.12A333.56,333.56,0,0,0,183.3,254.81a7,7,0,0,1-8.85-1.9A112.14,112.14,0,0,1,161.1,229.7a4.57,4.57,0,0,1,2.28-6,334.24,334.24,0,0,1,170.6-29,334.52,334.52,0,0,0-55-4.53A331.09,331.09,0,0,0,160.61,212a4.56,4.56,0,0,1-6.1-3.31q-1.12-5.51-1.72-11.19a4.57,4.57,0,0,1,3.07-4.77,333.45,333.45,0,0,1,215.44-.58Z"/>
+        <path class="cls-1" d="M362.13,67a6.31,6.31,0,0,1,6.38,6.85c-.77,8.84-2.32,23.87-4.44,30.93-.42,1.4-.86,2.76-1.33,4.09a76.84,76.84,0,0,1-4.52,10.43c-15.77,30-45.94,36.09-69.11,36.67a4.12,4.12,0,0,0-4,4.12v7.13q-8.71-.54-17.55-.63v-5.32a54.39,54.39,0,0,1,7.16-27.07,70.16,70.16,0,0,1,32.69-29.28,70.12,70.12,0,0,0-38.76,26.41c2.81-28.24,11.83-46.06,35.64-55.62a94.84,94.84,0,0,1,14.79-4.47h0l.81-.18C331.35,68.56,345.28,67.24,362.13,67Z"/>
+        <path class="cls-1" d="M261.14,95.67v70.89c-1.69,0-3.37,0-5.06.09q-6.27.15-12.49.53V100.42a4.13,4.13,0,0,0-4.05-4.13c-11-.18-23.06-1.25-34.22-6a54.66,54.66,0,0,1-9.94-5.45c-.93-.64-1.86-1.32-2.76-2.05-15-11.9-26.31-34.21-27.47-75.88a6.76,6.76,0,0,1,7-6.94c64.42,2,84.9,21.88,89.2,65H261c-10.83-14.17-28.37-25.3-46-28.18a70.19,70.19,0,0,1,36,27,1.77,1.77,0,0,1,.16.22,70,70,0,0,1,5.54,9.78c.2.45.43,1,.67,1.58A55.15,55.15,0,0,1,261.14,95.67Z"/>
+        <path class="cls-1" d="M177.05,103.27A2.66,2.66,0,1,0,173,99.86l-.65.66a134.45,134.45,0,1,0,206.91,30.72l-.17-.27a2.66,2.66,0,1,0-4.68,2.53l.14.34a121,121,0,1,1-198-30Z"/>
       </svg>
     </div>
     <div class="login-title">FeedbackJusto</div>
@@ -761,6 +786,36 @@
 
   <!-- TOAST -->
   <div class="toast" id="toast"></div>
+
+  <!-- GUIA INSTALACION -->
+  <div class="guia-overlay" id="guia-overlay" onclick="cerrarGuiaSiOverlay(event)">
+    <div class="guia-modal">
+      <div class="guia-top">
+        <div class="guia-title">Cómo instalar la app</div>
+        <button class="guia-close" onclick="cerrarGuia()">×</button>
+      </div>
+      <div class="guia-tabs">
+        <button class="guia-tab active" onclick="switchGuia('android',this)">Android</button>
+        <button class="guia-tab" onclick="switchGuia('ios',this)">iPhone</button>
+      </div>
+      <div class="guia-content active" id="guia-android">
+        <div class="guia-steps">
+          <div class="guia-step"><div class="guia-num">1</div><div class="guia-txt"><div class="guia-step-title">Abrí la app en Chrome</div><div class="guia-step-sub">Asegurate de estar usando Google Chrome, no otro navegador o app de email.</div></div></div>
+          <div class="guia-step"><div class="guia-num">2</div><div class="guia-txt"><div class="guia-step-title">Tocá los tres puntos ⋮</div><div class="guia-step-sub">Están en la esquina superior derecha de Chrome.</div><div class="guia-img"><svg width="200" height="56" viewBox="0 0 200 56" fill="none"><rect width="200" height="56" rx="10" fill="#F0FAF5"/><rect x="8" y="8" width="150" height="40" rx="8" fill="#fff" stroke="#D8EFE3" stroke-width="1"/><text x="18" y="32" font-size="10" fill="#4A6356" font-family="sans-serif">feedbackjusto.vercel.app</text><circle cx="176" cy="16" r="2.5" fill="#2D6A4F"/><circle cx="176" cy="28" r="2.5" fill="#2D6A4F"/><circle cx="176" cy="40" r="2.5" fill="#2D6A4F"/><circle cx="176" cy="28" r="8" fill="none" stroke="#E76F28" stroke-width="1.5" stroke-dasharray="3 2"/></svg></div></div></div>
+          <div class="guia-step"><div class="guia-num">3</div><div class="guia-txt"><div class="guia-step-title">Tocá "Añadir a pantalla de inicio"</div><div class="guia-step-sub">También puede aparecer como "Instalar app" en versiones nuevas de Chrome.</div><div class="guia-img"><svg width="200" height="90" viewBox="0 0 200 90" fill="none"><rect width="200" height="90" rx="10" fill="#F0FAF5"/><rect x="60" y="8" width="132" height="74" rx="8" fill="#fff" stroke="#D8EFE3" stroke-width="1"/><rect x="68" y="16" width="116" height="22" rx="4" fill="#D8EFE3"/><text x="78" y="31" font-size="10" fill="#1B3A2D" font-family="sans-serif" font-weight="bold">Añadir a inicio</text><rect x="68" y="44" width="116" height="18" rx="4" fill="#F7F3EE"/><text x="78" y="57" font-size="10" fill="#4A6356" font-family="sans-serif">Nueva pestaña</text><rect x="68" y="66" width="116" height="10" rx="3" fill="#F7F3EE"/><circle cx="68" cy="27" r="6" fill="#E76F28" opacity="0.9"/><text x="65" y="31" font-size="9" fill="#fff" font-family="sans-serif">↑</text></svg></div></div></div>
+          <div class="guia-step"><div class="guia-num">4</div><div class="guia-txt"><div class="guia-step-title">Confirmá tocando "Añadir"</div><div class="guia-step-sub">La app aparece en tu pantalla de inicio. ¡Listo!</div></div></div>
+        </div>
+      </div>
+      <div class="guia-content" id="guia-ios">
+        <div class="guia-steps">
+          <div class="guia-step"><div class="guia-num">1</div><div class="guia-txt"><div class="guia-step-title">Abrí la app en Safari</div><div class="guia-step-sub">En iPhone solo funciona desde Safari. Si lo abriste desde un email, copiá el link y pegalo en Safari.</div></div></div>
+          <div class="guia-step"><div class="guia-num">2</div><div class="guia-txt"><div class="guia-step-title">Tocá el botón compartir</div><div class="guia-step-sub">El cuadrado con flecha ↑ en la barra de abajo del navegador.</div><div class="guia-img"><svg width="200" height="60" viewBox="0 0 200 60" fill="none"><rect width="200" height="60" rx="10" fill="#F0FAF5"/><rect x="10" y="8" width="180" height="44" rx="8" fill="#fff" stroke="#D8EFE3" stroke-width="1"/><rect x="88" y="14" width="24" height="32" rx="4" fill="#F0FAF5" stroke="#D8EFE3" stroke-width="1"/><line x1="100" y1="38" x2="100" y2="22" stroke="#2D6A4F" stroke-width="1.5" stroke-linecap="round"/><polyline points="95,27 100,22 105,27" stroke="#2D6A4F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="100" cy="52" r="5" fill="#E76F28" opacity="0.9"/></svg></div></div></div>
+          <div class="guia-step"><div class="guia-num">3</div><div class="guia-txt"><div class="guia-step-title">Buscá "Añadir a pantalla de inicio"</div><div class="guia-step-sub">Deslizá hacia abajo en el menú de opciones hasta encontrarlo.</div><div class="guia-img"><svg width="200" height="80" viewBox="0 0 200 80" fill="none"><rect width="200" height="80" rx="10" fill="#F0FAF5"/><rect x="10" y="10" width="180" height="20" rx="4" fill="#F7F3EE" stroke="#D8EFE3" stroke-width="1"/><text x="20" y="24" font-size="9" fill="#4A6356" font-family="sans-serif">Copiar enlace</text><rect x="10" y="36" width="180" height="22" rx="4" fill="#D8EFE3" stroke="#2D6A4F" stroke-width="1.5"/><text x="20" y="51" font-size="10" fill="#1B3A2D" font-family="sans-serif" font-weight="bold">Añadir a pantalla de inicio</text><rect x="10" y="64" width="180" height="10" rx="3" fill="#F7F3EE"/><circle cx="5" cy="47" r="4" fill="#E76F28" opacity="0.9"/></svg></div></div></div>
+          <div class="guia-step"><div class="guia-num">4</div><div class="guia-txt"><div class="guia-step-title">Tocá "Añadir" arriba a la derecha</div><div class="guia-step-sub">La app aparece en tu pantalla de inicio. ¡Listo!</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- INSTALL BANNER -->
   <div class="install-banner" id="install-banner" style="display:none;">
@@ -1164,6 +1219,21 @@
   }
 
   // ── API CALL ─────────────────────────────────────────────
+  function abrirGuia(sistema) {
+    document.getElementById("guia-overlay").classList.add("open");
+    const tabs = document.querySelectorAll(".guia-tab");
+    switchGuia(sistema, sistema === "ios" ? tabs[1] : tabs[0]);
+  }
+  function cerrarGuia() { document.getElementById("guia-overlay").classList.remove("open"); }
+  function cerrarGuiaSiOverlay(e) { if (e.target === document.getElementById("guia-overlay")) cerrarGuia(); }
+  function switchGuia(sistema, tab) {
+    document.querySelectorAll(".guia-tab").forEach(t => t.classList.remove("active"));
+    document.querySelectorAll(".guia-content").forEach(c => c.classList.remove("active"));
+    if (tab) tab.classList.add("active");
+    const el = document.getElementById("guia-" + sistema);
+    if (el) el.classList.add("active");
+  }
+
   async function apiCall(data) {
     const params = new URLSearchParams({ payload: JSON.stringify(data) });
     const res = await fetch(API + "?" + params.toString());
@@ -1185,11 +1255,50 @@
 
   // ── PWA INSTALL ───────────────────────────────────────────
   let deferredPrompt = null;
+
+  function detectarSistema() {
+    const ua = navigator.userAgent;
+    if (/iPhone|iPad|iPod/.test(ua)) return "ios";
+    if (/Android/.test(ua)) return "android";
+    return "desktop";
+  }
+
+  function yaEstaInstalada() {
+    return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone;
+  }
+
+  function mostrarBanner() {
+    if (yaEstaInstalada()) return;
+    const sistema = detectarSistema();
+    const banner = document.getElementById("install-banner");
+    const btn = banner.querySelector(".install-btn");
+    const sub = banner.querySelector(".install-sub");
+
+    if (sistema === "ios") {
+      sub.textContent = "Tocá compartir → 'Añadir a inicio'";
+      btn.textContent = "Cómo hacerlo";
+      btn.onclick = () => abrirGuia('ios');
+      banner.style.display = "flex";
+    } else if (sistema === "android") {
+      if (deferredPrompt) {
+        sub.textContent = "Accedé desde tu pantalla de inicio";
+        btn.textContent = "Instalar";
+        btn.onclick = instalarPWA;
+        banner.style.display = "flex";
+      } else {
+        sub.textContent = "Menú ⋮ → 'Añadir a pantalla de inicio'";
+        btn.textContent = "Cómo hacerlo";
+        btn.onclick = () => abrirGuia('android');
+        banner.style.display = "flex";
+      }
+    }
+  }
+
   window.addEventListener("beforeinstallprompt", (e) => {
     e.preventDefault();
     deferredPrompt = e;
-    document.getElementById("install-banner").style.display = "flex";
   });
+
   function instalarPWA() {
     if (!deferredPrompt) return;
     deferredPrompt.prompt();
@@ -1198,9 +1307,13 @@
       document.getElementById("install-banner").style.display = "none";
     });
   }
+
   window.addEventListener("appinstalled", () => {
     document.getElementById("install-banner").style.display = "none";
   });
+
+  // Mostrar banner después de 2 segundos
+  setTimeout(mostrarBanner, 2000);
 </script>
 </body>
 </html>
