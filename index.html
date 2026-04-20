@@ -983,7 +983,7 @@
 
   function enviarWhatsApp() {
     const cliente = document.getElementById("input-cliente").value.trim();
-    const msg = encodeURIComponent(`Hola ${cliente}! 😊 Te comparto este link para que nos cuentes cómo fue tu experiencia con tu compra. Son solo 3 preguntas rápidas. ¡Gracias! 👉 ${generatedLink}`);
+    const msg = encodeURIComponent(`Hola ${cliente}! Te comparto este link para que nos cuentes como fue tu experiencia con tu compra. Son solo 3 preguntas rapidas. Gracias! ${generatedLink}`);
     window.open(`https://wa.me/?text=${msg}`, "_blank");
   }
 
