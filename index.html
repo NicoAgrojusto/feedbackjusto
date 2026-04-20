@@ -428,6 +428,11 @@
     font-weight: 500;
   }
   .drag-handle { font-size: 16px; color: var(--tx-s); cursor: grab; padding: 0 4px; }
+  .q-actions { display: flex; gap: 6px; margin-left: auto; align-items: center; }
+  .q-btn { font-size: 11px; padding: 3px 10px; border-radius: 20px; border: 1px solid var(--bd-m); background: var(--cream); color: var(--tx-m); cursor: pointer; font-family: var(--ff); font-weight: 500; transition: all 0.15s; }
+  .q-btn:active { transform: scale(0.96); }
+  .q-btn-edit:hover { background: var(--g-l); border-color: var(--g); color: var(--g-d); }
+  .q-btn-del:hover { background: var(--r-l); border-color: var(--r); color: var(--r-d); }
   .btn-add-q {
     width: 100%;
     padding: 12px;
@@ -1160,13 +1165,39 @@
         <div class="q-card" data-index="${i}">
           <div class="q-top">
             <span class="badge">${tipos[p.tipo] || p.tipo}</span>
-            <span class="drag-handle" title="Reordenar">⠿</span>
+            <div class="q-actions">
+              <button class="q-btn q-btn-edit" onclick="editarPregunta(${i})">Editar</button>
+              <button class="q-btn q-btn-del" onclick="borrarPregunta(${i})">Borrar</button>
+              <span class="drag-handle" title="Reordenar">⠿</span>
+            </div>
           </div>
           <div class="q-txt">${p.texto}</div>
           ${optsHtml ? `<div class="q-opts">${optsHtml}</div>` : ""}
         </div>`;
     });
     document.getElementById("preguntas-list").innerHTML = html;
+  }
+
+  function borrarPregunta(i) {
+    if (!confirm("¿Borrar esta pregunta?")) return;
+    preguntas.splice(i, 1);
+    renderPreguntas();
+    showToast("Pregunta borrada. Recordá guardar.");
+  }
+
+  function editarPregunta(i) {
+    const p = preguntas[i];
+    document.getElementById("modal-texto").value = p.texto;
+    setTipo(p.tipo);
+    if (p.tipo !== "texto") {
+      document.getElementById("modal-opciones").value = (p.opciones || []).join(", ");
+    }
+    // Guardar índice de edición
+    document.getElementById("modal-overlay").dataset.editIndex = i;
+    document.getElementById("guia-overlay") && null; // no interferir
+    document.getElementById("modal-overlay").classList.add("open");
+    // Cambiar texto del botón
+    document.querySelector("#modal-overlay .btn.btn-g").textContent = "Guardar cambios";
   }
 
   async function guardarPreguntas() {
@@ -1188,7 +1219,10 @@
     setTipo("emojis");
   }
   function cerrarModal() {
-    document.getElementById("modal-overlay").classList.remove("open");
+    const overlay = document.getElementById("modal-overlay");
+    overlay.classList.remove("open");
+    delete overlay.dataset.editIndex;
+    document.querySelector("#modal-overlay .btn.btn-g").textContent = "Agregar pregunta";
   }
   function cerrarModalSiOverlay(e) {
     if (e.target === document.getElementById("modal-overlay")) cerrarModal();
@@ -1212,10 +1246,18 @@
     const opciones = tipoSeleccionado !== "texto"
       ? document.getElementById("modal-opciones").value.split(",").map(s=>s.trim()).filter(Boolean)
       : [];
-    preguntas.push({ id: String(Date.now()), texto, tipo: tipoSeleccionado, opciones });
+    const editIndex = document.getElementById("modal-overlay").dataset.editIndex;
+    if (editIndex !== undefined && editIndex !== "") {
+      // Edición
+      preguntas[parseInt(editIndex)] = { id: preguntas[parseInt(editIndex)].id, texto, tipo: tipoSeleccionado, opciones };
+      showToast("Pregunta actualizada. Recordá guardar.");
+    } else {
+      // Nueva
+      preguntas.push({ id: String(Date.now()), texto, tipo: tipoSeleccionado, opciones });
+      showToast("Pregunta agregada. Recordá guardar.");
+    }
     renderPreguntas();
     cerrarModal();
-    showToast("Pregunta agregada. Recordá guardar.");
   }
 
   // ── API CALL ─────────────────────────────────────────────
